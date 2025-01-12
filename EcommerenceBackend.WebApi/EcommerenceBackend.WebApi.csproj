@@ -10,13 +10,21 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EcommerenceBackend.Application.Domain\EcommerenceBackend.Application.Domain.csproj" />
+    <ProjectReference Include="..\EcommerenceBackend.Application.Dto\EcommerenceBackend.Application.Dto.csproj" />
+    <ProjectReference Include="..\EcommerenceBackend.Application.Interface\EcommerenceBackend.Application.Interface.csproj" />
     <ProjectReference Include="..\EcommerenceBackend.Application.UseCases\EcommerenceBackend.Application.UseCases.csproj" />
+    <ProjectReference Include="..\EcommerenceBackend.Infrastructure\EcommerenceBackend.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

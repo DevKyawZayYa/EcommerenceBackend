@@ -6,6 +6,19 @@ using System.Threading.Tasks;
 
 namespace EcommerenceBackend.Application.Domain.Products
 {
-    public record Money(decimal Value, string Currency);
+    public class Money
+    {
+        public decimal Amount { get; private set; }
+        public string Currency { get; private set; }
 
+        // Parameterless constructor for EF Core
+        private Money() { }
+
+        // Constructor with parameters for business logic
+        public Money(decimal amount, string currency)
+        {
+            Amount = amount;
+            Currency = currency;
+        }
+    }
 }

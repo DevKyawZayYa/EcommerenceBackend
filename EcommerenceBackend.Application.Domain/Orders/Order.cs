@@ -1,4 +1,5 @@
-﻿using EcommerenceBackend.Application.Domain.Entities;
+﻿using EcommerenceBackend.Application.Domain.Customers;
+using EcommerenceBackend.Application.Domain.Entities;
 using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Application.Domain.Orders;
 using EcommerenceBackend.Application.Domain.Products;
 using System;
@@ -17,16 +18,15 @@ namespace EcommerenceBackend.Application.Domain.Orders
         {
         }
         public OrderId Id { get; private set; }
-
-        public Guid UserId { get; private set; }
+        public CustomerId CustomerId { get; private set; }
         public IReadOnlyList<LineItem> LineItems => _lineItems.ToList();
 
-        public static Order Create(User  user)
+        public static Order Create(Customer  customer)
         {
             return new Order
             {
                 Id = OrderId.Create(Guid.NewGuid()),
-                UserId = user.Id
+                CustomerId = customer.Id
             };
         }
 

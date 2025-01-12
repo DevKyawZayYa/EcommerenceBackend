@@ -15,7 +15,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("NorthwindConnection"),
-        new MySqlServerVersion(new Version(8, 0, 32)) // Replace with your MySQL version
+        new MySqlServerVersion(new Version(8, 0, 32)),
+        b => b.MigrationsAssembly("EcommerenceBackend.Infrastructure")
     ));
 
 // Register repositories

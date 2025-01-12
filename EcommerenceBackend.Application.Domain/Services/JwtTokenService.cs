@@ -24,7 +24,7 @@ namespace EcommerenceBackend.Application.Domain.Services
         //{
         //    Subject = new ClaimsIdentity(new[]
         //    {
-        //        new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+        //        new Claim(ClaimTypes.NameIdentifier, user.CustomerId.ToString()),
         //        new Claim(ClaimTypes.Email, user.Email),
         //        // Add other claims as needed
         //    }),

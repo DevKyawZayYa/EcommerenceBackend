@@ -1,4 +1,5 @@
-﻿using EcommerenceBackend.Application.Domain.Entities;
+﻿using EcommerenceBackend.Application.Domain.Customers;
+using EcommerenceBackend.Application.Domain.Entities;
 using EcommerenceBackend.Application.Domain.Orders;
 using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Application.Domain.Orders;
 using Microsoft.EntityFrameworkCore;
@@ -16,9 +17,9 @@ namespace EcommerenceBackend.Infrastructure.Configurations
                 orderId => orderId.Value,
                 value => new OrderId(value));   
 
-            builder.HasOne<User>()
+            builder.HasOne<Customer>()
                 .WithMany()
-                .HasForeignKey(o => o.UserId)
+                .HasForeignKey(o => o.CustomerId)
                 .IsRequired();
 
             builder.HasMany(o => o.LineItems)
