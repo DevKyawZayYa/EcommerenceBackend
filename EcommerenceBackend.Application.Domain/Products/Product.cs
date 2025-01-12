@@ -1,0 +1,19 @@
+﻿using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EcommerenceBackend.Application.Domain.Products
+{
+    public class Product
+    {
+        public ProductId Id { get; private set; }
+        public string Name { get; private set; } = string.Empty;
+        public Money Price { get; private set; }
+
+        public Sku Sku { get; private set; }
+    }
+}
+

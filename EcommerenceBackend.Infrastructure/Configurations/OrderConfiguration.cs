@@ -1,0 +1,29 @@
+﻿using EcommerenceBackend.Application.Domain.Entities;
+using EcommerenceBackend.Application.Domain.Orders;
+using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Application.Domain.Orders;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace EcommerenceBackend.Infrastructure.Configurations
+{
+    internal class OrderConfiguration : IEntityTypeConfiguration<Order>
+    {
+        public void Configure(EntityTypeBuilder<Order> builder)
+        {
+            builder.HasKey(o => o.Id);
+
+            builder.Property(o => o.Id).HasConversion(
+                orderId => orderId.Value,
+                value => new OrderId(value));   
+
+            builder.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(o => o.UserId)
+                .IsRequired();
+
+            builder.HasMany(o => o.LineItems)
+                .WithOne()
+                .HasForeignKey(li => li.OrderId);
+        }
+    }
+}
