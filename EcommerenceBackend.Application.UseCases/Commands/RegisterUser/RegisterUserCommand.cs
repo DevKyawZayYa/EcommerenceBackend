@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using EcommerenceBackend.Application.Domain.Users;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace EcommerenceBackend.Application.UseCases.Commands.RegisterUser
 {
     public class RegisterUserCommand : IRequest
     {
-        public Guid Id { get; set; }
+        public UserId Id { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Email { get; set; }

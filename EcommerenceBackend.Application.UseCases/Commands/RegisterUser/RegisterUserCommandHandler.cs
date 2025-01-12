@@ -1,14 +1,10 @@
-﻿using EcommerenceBackend.Application.Domain.Entities;
-using EcommerenceBackend.Application.Domain.ValueObjects;
+﻿using AutoMapper;
+using EcommerenceBackend.Application.Domain.Entities;
+using EcommerenceBackend.Application.Domain.Users;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EcommerenceBackend.Application.UseCases.Commands.RegisterUser
 {
@@ -16,20 +12,27 @@ namespace EcommerenceBackend.Application.UseCases.Commands.RegisterUser
     {
         private readonly IValidator<RegisterUserCommand> _validator;
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public RegisterUserCommandHandler(IValidator<RegisterUserCommand> validator,ApplicationDbContext context)
+        public RegisterUserCommandHandler(
+            IValidator<RegisterUserCommand> validator,
+            ApplicationDbContext context,
+            IMapper mapper)
         {
             _validator = validator ?? throw new ArgumentNullException(nameof(validator));
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
+            // Validate the request
             var validationResult = await _validator.ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)
             {
             }
 
+            // Check if the user already exists
             var existingUser = await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
 
@@ -38,22 +41,15 @@ namespace EcommerenceBackend.Application.UseCases.Commands.RegisterUser
                 throw new InvalidOperationException("A user with this email already exists.");
             }
 
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 12);
+            // Map the command to the User entity
+            var newUser = _mapper.Map<User>(request);
+            newUser.Password = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 12);
+            newUser.CreatedDate = DateTime.UtcNow;
+            newUser.IsActive = true;
 
-            var newUser = new User
-            {
-                Id = request.Id,
-                FirstName = new FirstName(request.FirstName!),
-                LastName = new LastName(request.LastName!),
-                Email = request.Email!,
-                Password = hashedPassword,
-                CreatedDate = DateTime.UtcNow,
-                IsActive = true
-            };
-
+            // Add the new user to the database
             await _context.Users.AddAsync(newUser, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
         }
     }
-
 }

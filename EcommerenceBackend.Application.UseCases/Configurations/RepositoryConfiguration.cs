@@ -1,20 +1,23 @@
-﻿using EcommerenceBackend.Application.Domain.Services;
+﻿using EcommerenceBackend.Application.Domain.Configurations;
+using EcommerenceBackend.Application.Domain.Services;
 using EcommerenceBackend.Application.UseCases.Commands.RegisterUser;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace EcommerenceBackend.Application.UseCases.Configurations
 {
     public static class RepositoryConfiguration
     {
-        public static IServiceCollection ConfigureRepositories(this IServiceCollection services)
+        public static IServiceCollection ConfigureRepositories(this IServiceCollection services, IConfiguration configuration)
         {
-            // Register generic repositories
+            // Map JwtSettings from appsettings.json
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+
+            // Register JwtTokenService
             services.AddTransient<JwtTokenService>();
+
+            // Register generic repositories
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Consolidate MediatR registration
             services.AddMediatR(cfg =>

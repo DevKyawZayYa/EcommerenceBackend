@@ -1,4 +1,5 @@
-﻿using EcommerenceBackend.Application.UseCases.Commands.RegisterUser;
+﻿using EcommerenceBackend.Application.UseCases.Commands.LoginUser;
+using EcommerenceBackend.Application.UseCases.Commands.RegisterUser;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,13 @@ namespace EcommerenceBackend.WebApi.Controllers
         {
             await _mediator.Send(command);
             return Ok("User registered successfully.");
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
     }
 }

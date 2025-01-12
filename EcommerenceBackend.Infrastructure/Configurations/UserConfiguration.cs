@@ -1,9 +1,12 @@
-﻿using EcommerenceBackend.Application.Domain.Entities;
+﻿using EcommerenceBackend.Application.Domain.Customers;
+using EcommerenceBackend.Application.Domain.Entities;
+using EcommerenceBackend.Application.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,9 +14,22 @@ namespace EcommerenceBackend.Infrastructure.Configurations
 {
     internal class UserConfiguration : IEntityTypeConfiguration<User>
     {
-       public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<User> builder)
         {
-          
+            builder.HasKey(u => u.Id);
+
+            builder.Property(u => u.Id).HasConversion(
+                userId => userId.Value,
+                value => new UserId(value));
+
+            builder.Property(u => u.FirstName).HasConversion(
+             firstName => firstName.Value,
+             value => new FirstName(value));
+
+            builder.Property(u => u.LastName).HasConversion(
+                lirstName => lirstName.Value,
+                value => new LastName(value));
+
         }
     }
 }
