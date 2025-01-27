@@ -1,5 +1,6 @@
-﻿using EcommerenceBackend.Application.UseCases.Commands.LoginUser;
-using EcommerenceBackend.Application.UseCases.Commands.RegisterUser;
+﻿using EcommerenceBackend.Application.Domain.Users;
+using EcommerenceBackend.Application.UseCases.Queries.GetUserProfileById;
+using EcommerenceBackend.Application.UseCases.User.Queries.GetUserProfileByAllQuery;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,23 +12,23 @@ namespace EcommerenceBackend.WebApi.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
-
         public UserController(IMediator mediator)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        [HttpPost("Register")]
-        public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserProfileById(Guid id)
         {
-            await _mediator.Send(command);
-            return Ok("User registered successfully.");
+            var query = new GetUserProfileByIdQuery { UserId = new UserId(id) };
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginUserCommand command)
+        [HttpGet("GetUserProfileByAll")]
+        public async Task<IActionResult> GetUserProfileByAll()
         {
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(new GetUserProfileByAllQuery());
             return Ok(result);
         }
     }

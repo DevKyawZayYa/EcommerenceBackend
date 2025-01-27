@@ -1,5 +1,4 @@
-﻿using EcommerenceBackend.Application.Domain.Entities;
-using EcommerenceBackend.Application.Domain.Orders;
+﻿using EcommerenceBackend.Application.Domain.Orders;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System;

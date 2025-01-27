@@ -1,8 +1,8 @@
 ﻿using EcommerenceBackend.Application.Domain.Configurations;
 using EcommerenceBackend.Application.Domain.Services;
-using EcommerenceBackend.Application.UseCases.Commands.RegisterUser;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using EcommerenceBackend.Application.UseCases.Onboarding.Commands.RegisterUser;
 
 namespace EcommerenceBackend.Application.UseCases.Configurations
 {

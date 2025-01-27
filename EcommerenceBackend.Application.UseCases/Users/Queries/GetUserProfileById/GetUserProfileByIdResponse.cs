@@ -1,20 +1,12 @@
 ﻿using EcommerenceBackend.Application.Domain.Users;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace EcommerenceBackend.Application.UseCases.Commands.RegisterUser
+namespace EcommerenceBackend.Application.UseCases.Queries.GetUserProfileById
 {
-    public class RegisterUserCommand : IRequest
+    public class GetUserProfileByIdResponse
     {
-        public UserId Id { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
+        public FirstName? FirstName { get; set; }
+        public LastName? LastName { get; set; }
         public string? Email { get; set; }
-        public string? Password { get; set; }
         public string? City { get; set; }
         public string? MobileCode { get; set; }
         public string? MobileNumber { get; set; }
@@ -24,7 +16,6 @@ namespace EcommerenceBackend.Application.UseCases.Commands.RegisterUser
         public string? Country { get; set; }
         public string? Role { get; set; }
         public DateTime CreatedDate { get; set; }
-        public DateTime? LastLoginDate { get; set; }
-
+        public DateTime ? LastLoginDate { get; set; }
     }
 }

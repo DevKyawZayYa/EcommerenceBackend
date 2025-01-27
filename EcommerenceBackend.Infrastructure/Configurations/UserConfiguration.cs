@@ -1,5 +1,4 @@
 ﻿using EcommerenceBackend.Application.Domain.Customers;
-using EcommerenceBackend.Application.Domain.Entities;
 using EcommerenceBackend.Application.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

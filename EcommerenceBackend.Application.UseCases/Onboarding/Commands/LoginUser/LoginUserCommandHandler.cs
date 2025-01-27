@@ -1,5 +1,4 @@
-﻿using EcommerenceBackend.Application.Domain.Entities;
-using EcommerenceBackend.Application.Dto.Users;
+﻿using EcommerenceBackend.Application.Dto.Users;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +8,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace EcommerenceBackend.Application.UseCases.Commands.LoginUser
+namespace EcommerenceBackend.Application.UseCases.Onboarding.Commands.LoginUser
 {
     public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginUserResponse>
     {

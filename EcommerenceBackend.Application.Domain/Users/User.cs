@@ -6,14 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EcommerenceBackend.Application.Domain.Entities
+namespace EcommerenceBackend.Application.Domain.Users
 {
     public class User
     {
-        public UserId Id { get; set; }
-        public FirstName FirstName { get; set; }
-        public LastName LastName { get; set; }
-        public string Email { get; set; }
+        public UserId? Id { get; set; }
+        public FirstName? FirstName { get; set; }
+        public LastName? LastName { get; set; }
+        public string? Email { get; set; }
         public bool IsActive { get; set; }
         public string? Password { get; set; } // Secured access
         public string? City { get; set; }

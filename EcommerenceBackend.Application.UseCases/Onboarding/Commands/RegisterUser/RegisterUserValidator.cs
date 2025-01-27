@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace EcommerenceBackend.Application.UseCases.Commands.RegisterUser
+namespace EcommerenceBackend.Application.UseCases.Onboarding.Commands.RegisterUser
 {
     public class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
     {

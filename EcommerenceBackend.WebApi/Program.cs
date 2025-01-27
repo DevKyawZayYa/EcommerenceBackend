@@ -1,4 +1,3 @@
-using EcommerenceBackend.Application.UseCases.Commands.RegisterUser;
 using EcommerenceBackend.Application.UseCases.Configurations;
 using EcommerenceBackend.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;

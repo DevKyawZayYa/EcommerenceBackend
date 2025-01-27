@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using EcommerenceBackend.Application.Domain.Entities;
-using EcommerenceBackend.Application.Domain.Users;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+using EcommerenceBackend.Application.Domain.Users;
 
-namespace EcommerenceBackend.Application.UseCases.Commands.RegisterUser
+namespace EcommerenceBackend.Application.UseCases.Onboarding.Commands.RegisterUser
 {
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand>
     {
@@ -30,6 +28,7 @@ namespace EcommerenceBackend.Application.UseCases.Commands.RegisterUser
             var validationResult = await _validator.ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)
             {
+                // Handle validation failure (e.g., throw an exception or return an error response)
             }
 
             // Check if the user already exists
@@ -41,13 +40,12 @@ namespace EcommerenceBackend.Application.UseCases.Commands.RegisterUser
                 throw new InvalidOperationException("A user with this email already exists.");
             }
 
-            // Map the command to the User entity
-            var newUser = _mapper.Map<User>(request);
+            // Map the command to the User entity.
+            var newUser = _mapper.Map<EcommerenceBackend.Application.Domain.Users.User>(request);
             newUser.Password = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 12);
             newUser.CreatedDate = DateTime.UtcNow;
             newUser.IsActive = true;
 
-            // Add the new user to the database
             await _context.Users.AddAsync(newUser, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
         }
