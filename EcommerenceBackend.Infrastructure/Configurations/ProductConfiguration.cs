@@ -15,13 +15,14 @@ namespace EcommerenceBackend.Infrastructure.Configurations
                 productId => productId.Value,
                 value => new ProductId(value));
 
-            builder.Property(p => p.Sku).HasConversion(
-                sku => sku.Value,
-                value =>  Sku.Create(value)!);
-
-            builder.OwnsOne(p => p.Price, priceBuilder =>
+            builder.OwnsOne(p => p.Price, p =>
             {
-                priceBuilder.Property(p => p.Currency).HasMaxLength(3);
+                p.Property(m => m.Amount).HasColumnName("Price");
+            });
+
+            builder.OwnsOne(p => p.Sku, p =>
+            {
+                p.Property(s => s.Value).HasColumnName("Sku");
             });
         }
     }

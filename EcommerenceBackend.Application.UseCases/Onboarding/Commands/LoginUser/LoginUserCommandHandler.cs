@@ -45,8 +45,8 @@ namespace EcommerenceBackend.Application.UseCases.Onboarding.Commands.LoginUser
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id!.ToString()),
+                    new Claim(ClaimTypes.Email, user.Email!),
                     new Claim(ClaimTypes.Role, user.Role ?? "User")
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(expirationInMinutes),

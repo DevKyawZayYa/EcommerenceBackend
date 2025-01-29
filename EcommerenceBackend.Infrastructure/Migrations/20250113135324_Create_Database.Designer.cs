@@ -138,7 +138,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("LineItem", b =>
+            modelBuilder.Entity("OrderItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
@@ -155,7 +155,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("LineItems");
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("EcommerenceBackend.Application.Domain.Orders.Order", b =>
@@ -194,10 +194,10 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("LineItem", b =>
+            modelBuilder.Entity("OrderItem", b =>
                 {
                     b.HasOne("EcommerenceBackend.Application.Domain.Orders.Order", null)
-                        .WithMany("LineItems")
+                        .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -210,7 +210,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
 
                     b.OwnsOne("EcommerenceBackend.Application.Domain.Products.Money", "Price", b1 =>
                         {
-                            b1.Property<Guid>("LineItemId")
+                            b1.Property<Guid>("OrderItemId")
                                 .HasColumnType("char(36)");
 
                             b1.Property<decimal>("Amount")
@@ -220,12 +220,12 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                                 .IsRequired()
                                 .HasColumnType("longtext");
 
-                            b1.HasKey("LineItemId");
+                            b1.HasKey("OrderItemId");
 
-                            b1.ToTable("LineItems");
+                            b1.ToTable("OrderItems");
 
                             b1.WithOwner()
-                                .HasForeignKey("LineItemId");
+                                .HasForeignKey("OrderItemId");
                         });
 
                     b.Navigation("Price")
@@ -234,7 +234,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
 
             modelBuilder.Entity("EcommerenceBackend.Application.Domain.Orders.Order", b =>
                 {
-                    b.Navigation("LineItems");
+                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

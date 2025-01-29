@@ -21,7 +21,7 @@ namespace EcommerenceBackend.Infrastructure.Configurations
                 .HasForeignKey(o => o.CustomerId)
                 .IsRequired();
 
-            builder.HasMany(o => o.LineItems)
+            builder.HasMany(o => o.OrderItems)
                 .WithOne()
                 .HasForeignKey(li => li.OrderId);
         }

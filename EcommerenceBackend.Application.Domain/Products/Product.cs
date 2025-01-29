@@ -14,6 +14,7 @@ namespace EcommerenceBackend.Application.Domain.Products
         public string? Description { get; private set; } = string.Empty;
         public Money? Price { get; private set; }
         public Sku? Sku { get; private set; }
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }
 }
 

@@ -108,7 +108,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "LineItems",
+                name: "OrderItems",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
@@ -120,15 +120,15 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LineItems", x => x.Id);
+                    table.PrimaryKey("PK_orderItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LineItems_Orders_OrderId",
+                        name: "FK_orderItems_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LineItems_Products_ProductId",
+                        name: "FK_orderItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
@@ -143,13 +143,13 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_LineItems_OrderId",
-                table: "LineItems",
+                name: "IX_orderItems_OrderId",
+                table: "OrderItems",
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LineItems_ProductId",
-                table: "LineItems",
+                name: "IX_orderItems_ProductId",
+                table: "OrderItems",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
@@ -162,7 +162,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "LineItems");
+                name: "OrderItems");
 
             migrationBuilder.DropTable(
                 name: "Users");

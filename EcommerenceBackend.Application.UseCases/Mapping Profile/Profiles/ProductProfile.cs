@@ -1,0 +1,27 @@
+﻿using AutoMapper;
+using EcommerenceBackend.Application.Domain.Products;
+using EcommerenceBackend.Application.Dto.Products;
+using EcommerenceBackend.Application.UseCases.Products.Commands.UpdateProduct;
+
+namespace EcommerenceBackend.Application.UseCases.MappingProfile.Profiles
+{
+    public class ProductProfile : Profile
+    {
+        public ProductProfile()
+        {
+            CreateMap<CreateProductDto, Product>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore()) // Id will be set in the handler
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => new Money(src.Price))) // Custom mapping for Price
+                .ForMember(dest => dest.Sku, opt => opt.MapFrom(src => new Sku(src.Stock.ToString()))) // Custom mapping for Sku
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+            ;
+
+            CreateMap<Product, ProductDetailsDto>();
+
+            CreateMap<UpdateProductCommand, Product>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore()); 
+        }
+    }
+}

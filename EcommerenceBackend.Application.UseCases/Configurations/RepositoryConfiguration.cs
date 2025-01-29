@@ -3,6 +3,7 @@ using EcommerenceBackend.Application.Domain.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using EcommerenceBackend.Application.UseCases.Onboarding.Commands.RegisterUser;
+using EcommerenceBackend.Application.UseCases.Products.Commands.CreateProduct;
 
 namespace EcommerenceBackend.Application.UseCases.Configurations
 {
@@ -23,6 +24,7 @@ namespace EcommerenceBackend.Application.UseCases.Configurations
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(typeof(RegisterUserCommandHandler).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(CreateProductCommandHandler).Assembly);
             });
 
             return services;

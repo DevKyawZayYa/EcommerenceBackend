@@ -11,15 +11,15 @@ using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Applicatio
 
 namespace EcommerenceBackend.Infrastructure.Configurations
 {
-    internal class LineItemConfiguration : IEntityTypeConfiguration<LineItem>
+    internal class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
     {
-        public void Configure(EntityTypeBuilder<LineItem> builder)
+        public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
             builder.HasKey(li => li.Id);
 
             builder.Property(li => li.Id).HasConversion(
-                lineItemId => lineItemId.Value,
-                value => new LineItemId(value));
+                OrderItemId => OrderItemId.Value,
+                value => new OrderItemId(value));
 
             builder.HasOne<Product>()
                 .WithMany()

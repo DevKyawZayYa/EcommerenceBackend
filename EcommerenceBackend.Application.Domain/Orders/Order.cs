@@ -11,14 +11,14 @@ namespace EcommerenceBackend.Application.Domain.Orders
 {
     public class Order
     {
-        private readonly HashSet<LineItem> _lineItems = new ();
+        private readonly HashSet<OrderItem> _orderItems = new ();
 
         private Order()
         {
         }
         public OrderId Id { get; private set; }
         public CustomerId CustomerId { get; private set; }
-        public IReadOnlyList<LineItem> LineItems => _lineItems.ToList();
+        public IReadOnlyList<OrderItem> OrderItems => _orderItems.ToList();
 
         public static Order Create(Customer  customer)
         {
@@ -31,14 +31,14 @@ namespace EcommerenceBackend.Application.Domain.Orders
 
         public void Add(Product product)
         {
-            var lineItem = new LineItem(
-                LineItemId.Create(Guid.NewGuid()),
+            var OrderItem = new OrderItem(
+                OrderItemId.Create(Guid.NewGuid()),
                 Id,
                 product.Id,
                 product.Price
             );
 
-            _lineItems.Add(lineItem);
+            _orderItems.Add(OrderItem);
         }
     }
 }

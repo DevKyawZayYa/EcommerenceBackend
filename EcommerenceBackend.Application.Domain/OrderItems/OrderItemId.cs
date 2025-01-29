@@ -10,27 +10,27 @@ namespace EcommerenceBackend.Application.Domain.Orders
 
     namespace EcommerenceBackend.Application.Domain.Orders
     {
-        public class LineItemId : IEquatable<LineItemId>
+        public class OrderItemId : IEquatable<OrderItemId>
         {
             public Guid Value { get; }
 
             // Make the constructor public to fix the accessibility issue
-            public LineItemId(Guid value)
+            public OrderItemId(Guid value)
             {
                 Value = value;
             }
 
-            public static LineItemId Create(Guid value)
+            public static OrderItemId Create(Guid value)
             {
-                return new LineItemId(value);
+                return new OrderItemId(value);
             }
 
             public override bool Equals(object obj)
             {
-                return Equals(obj as LineItemId);
+                return Equals(obj as OrderItemId);
             }
 
-            public bool Equals(LineItemId other)
+            public bool Equals(OrderItemId other)
             {
                 return other != null && Value.Equals(other.Value);
             }
