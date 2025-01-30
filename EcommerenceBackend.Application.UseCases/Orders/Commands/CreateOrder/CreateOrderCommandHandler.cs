@@ -9,15 +9,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EcommerenceBackend.Infrastructure.Contexts;
 
 namespace EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder
 {
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Guid>
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly OrderDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public CreateOrderCommandHandler(ApplicationDbContext dbContext, IMapper mapper)
+        public CreateOrderCommandHandler(OrderDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
@@ -36,7 +37,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder
             ).ToList();
 
             var order = new Order(
-                request.CustomerId,
+                request.CustomerId!,
                 orderItems,
                 request.TaxAmount,
                 request.ShippingCost,

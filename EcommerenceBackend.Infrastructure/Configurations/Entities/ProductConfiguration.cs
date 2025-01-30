@@ -3,7 +3,7 @@ using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Applicat
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EcommerenceBackend.Infrastructure.Configurations
+namespace EcommerenceBackend.Infrastructure.Configurations.Entities
 {
     internal class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
@@ -11,7 +11,7 @@ namespace EcommerenceBackend.Infrastructure.Configurations
         {
             builder.HasKey(p => p.Id);
 
-            builder.Property(p=> p.Id).HasConversion(
+            builder.Property(p => p.Id).HasConversion(
                 productId => productId.Value,
                 value => new ProductId(value));
 

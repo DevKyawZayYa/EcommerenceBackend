@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using EcommerenceBackend.Infrastructure.Contexts;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,9 @@ namespace EcommerenceBackend.Application.UseCases.Products.Commands.DeleteProduc
 {
     public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, bool>
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly OrderDbContext _dbContext;
 
-        public DeleteProductCommandHandler(ApplicationDbContext dbContext)
+        public DeleteProductCommandHandler(OrderDbContext dbContext)
         {
             _dbContext = dbContext;
         }

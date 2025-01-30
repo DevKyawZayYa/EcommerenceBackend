@@ -102,7 +102,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                         name: "FK_Orders_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Id",
+                        principalColumn: "ShoppingCartId",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -125,13 +125,13 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                         name: "FK_orderItems_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "Id",
+                        principalColumn: "ShoppingCartId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_orderItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
-                        principalColumn: "Id",
+                        principalColumn: "ShoppingCartId",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");

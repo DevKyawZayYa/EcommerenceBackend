@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using EcommerenceBackend.Application.Domain.Customers;
 using EcommerenceBackend.Application.Domain.Users;
 
-namespace EcommerenceBackend.Infrastructure.Configurations
+namespace EcommerenceBackend.Infrastructure.Configurations.Entities
 {
     internal class CustomerConfiguration : IEntityTypeConfiguration<Customer>
     {

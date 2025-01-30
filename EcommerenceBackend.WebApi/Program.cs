@@ -1,22 +1,17 @@
 using EcommerenceBackend.Application.UseCases.Configurations;
 using EcommerenceBackend.Infrastructure.Configurations;
+using EcommerenceBackend.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add DbContext before building the app
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("NorthwindConnection"),
-        new MySqlServerVersion(new Version(8, 0, 32)),
-        b => b.MigrationsAssembly("EcommerenceBackend.Infrastructure")
-    ));
+// Add custom DbContexts
+builder.Services.AddCustomDbContexts(builder.Configuration);
 
 // Register repositories
 builder.Services.ConfigureRepositories(builder.Configuration);
@@ -33,9 +28,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

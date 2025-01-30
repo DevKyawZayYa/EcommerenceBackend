@@ -4,15 +4,16 @@ using MediatR;
 using EcommerenceBackend.Application.Dto.Products;
 using EcommerenceBackend.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using EcommerenceBackend.Infrastructure.Contexts;
 
 namespace EcommerenceBackend.Application.UseCases.Products.Queries.GetProductDetailsById
 {
     public class GetProductDetailsByIdQueryHandler : IRequestHandler<GetProductDetailsByIdQuery, ProductDetailsDto>
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly OrderDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public GetProductDetailsByIdQueryHandler(ApplicationDbContext dbContext, IMapper mapper)
+        public GetProductDetailsByIdQueryHandler(OrderDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;

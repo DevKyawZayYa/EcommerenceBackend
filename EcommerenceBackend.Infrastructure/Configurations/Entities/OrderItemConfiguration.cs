@@ -1,12 +1,11 @@
-﻿// EcommerenceBackend.Infrastructure/Configurations/OrderItemConfiguration.cs
-using EcommerenceBackend.Application.Domain.Orders;
+﻿using EcommerenceBackend.Application.Domain.Orders;
 using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Application.Domain.Orders;
 using EcommerenceBackend.Application.Domain.Products;
 using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EcommerenceBackend.Infrastructure.Configurations
+namespace EcommerenceBackend.Infrastructure.Configurations.Entities
 {
     internal class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
     {

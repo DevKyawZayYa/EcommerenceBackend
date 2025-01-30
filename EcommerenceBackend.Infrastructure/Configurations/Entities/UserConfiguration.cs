@@ -10,7 +10,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EcommerenceBackend.Infrastructure.Configurations
+namespace EcommerenceBackend.Infrastructure.Configurations.Entities
 {
     internal class UserConfiguration : IEntityTypeConfiguration<User>
     {

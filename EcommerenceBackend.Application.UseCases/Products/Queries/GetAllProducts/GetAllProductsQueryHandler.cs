@@ -2,6 +2,7 @@
 using EcommerenceBackend.Application.Domain.Products;
 using EcommerenceBackend.Application.Dto.Common;
 using EcommerenceBackend.Application.Dto.Products;
+using EcommerenceBackend.Infrastructure.Contexts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -15,10 +16,10 @@ namespace EcommerenceBackend.Application.UseCases.Products.Queries.GetAllProduct
 {
     public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, PagedResult<ProductDetailsDto>>
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly OrderDbContext _dbContext;
         private readonly IMapper _mapper;
 
-      public GetAllProductsQueryHandler(ApplicationDbContext dbContext, IMapper mapper)
+      public GetAllProductsQueryHandler(OrderDbContext dbContext, IMapper mapper)
       {
             _dbContext = dbContext;
             _mapper = mapper;

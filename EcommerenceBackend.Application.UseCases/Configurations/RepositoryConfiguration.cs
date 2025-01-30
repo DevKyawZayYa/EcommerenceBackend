@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using EcommerenceBackend.Application.UseCases.Onboarding.Commands.RegisterUser;
 using EcommerenceBackend.Application.UseCases.Products.Commands.CreateProduct;
+using EcommerenceBackend.Application.UseCases.ShoppingCart.Commands;
 
 namespace EcommerenceBackend.Application.UseCases.Configurations
 {

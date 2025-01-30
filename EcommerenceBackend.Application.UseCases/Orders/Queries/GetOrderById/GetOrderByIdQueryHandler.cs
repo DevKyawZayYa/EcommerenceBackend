@@ -6,15 +6,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using EcommerenceBackend.Application.Dto.Orders.Response;
+using EcommerenceBackend.Infrastructure.Contexts;
 
 namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderById
 {
     public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDto>
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly OrderDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public GetOrderByIdQueryHandler(ApplicationDbContext dbContext, IMapper mapper)
+        public GetOrderByIdQueryHandler(OrderDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;

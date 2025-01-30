@@ -26,7 +26,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
 
             modelBuilder.Entity("EcommerenceBackend.Application.Domain.Customers.Customer", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ShoppingCartId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Email")
@@ -39,7 +39,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ShoppingCartId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -49,7 +49,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
 
             modelBuilder.Entity("EcommerenceBackend.Application.Domain.Entities.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ShoppingCartId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Address")
@@ -100,20 +100,20 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                     b.Property<string>("Role")
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.HasKey("ShoppingCartId");
 
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("EcommerenceBackend.Application.Domain.Orders.Order", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ShoppingCartId")
                         .HasColumnType("char(36)");
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ShoppingCartId");
 
                     b.HasIndex("CustomerId");
 
@@ -122,7 +122,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
 
             modelBuilder.Entity("EcommerenceBackend.Application.Domain.Products.Product", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ShoppingCartId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
@@ -133,14 +133,14 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.HasKey("ShoppingCartId");
 
                     b.ToTable("Products");
                 });
 
             modelBuilder.Entity("OrderItem", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ShoppingCartId")
                         .HasColumnType("char(36)");
 
                     b.Property<Guid>("OrderId")
@@ -149,7 +149,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ShoppingCartId");
 
                     b.HasIndex("OrderId");
 

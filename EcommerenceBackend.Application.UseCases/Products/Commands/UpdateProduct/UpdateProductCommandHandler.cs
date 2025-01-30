@@ -4,15 +4,16 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using EcommerenceBackend.Application.Domain.Products;
 using EcommerenceBackend.Infrastructure;
+using EcommerenceBackend.Infrastructure.Contexts;
 
 namespace EcommerenceBackend.Application.UseCases.Products.Commands.UpdateProduct
 {
     public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, bool>
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly OrderDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public UpdateProductCommandHandler(ApplicationDbContext dbContext, IMapper mapper)
+        public UpdateProductCommandHandler(OrderDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;

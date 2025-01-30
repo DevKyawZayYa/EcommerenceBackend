@@ -10,7 +10,7 @@ namespace EcommerenceBackend.Application.UseCases.MappingProfile.Profiles
         public ProductProfile()
         {
             CreateMap<CreateProductDto, Product>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore()) // Id will be set in the handler
+                .ForMember(dest => dest.Id, opt => opt.Ignore()) 
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => new Money(src.Price))) // Custom mapping for Price

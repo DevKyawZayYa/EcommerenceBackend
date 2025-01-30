@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Application.Domain.Orders;
 
-namespace EcommerenceBackend.Infrastructure.Configurations
+namespace EcommerenceBackend.Infrastructure.Configurations.Entities
 {
     internal class OrderConfiguration : IEntityTypeConfiguration<Order>
     {

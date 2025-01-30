@@ -9,14 +9,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EcommerenceBackend.Infrastructure.Contexts;
 
 namespace EcommerenceBackend.Application.UseCases.Orders.Commands.UpdateOrder
 {
     public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, bool>
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly OrderDbContext _dbContext;
 
-        public UpdateOrderCommandHandler(ApplicationDbContext dbContext, IMapper mapper)
+        public UpdateOrderCommandHandler(OrderDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
         }
