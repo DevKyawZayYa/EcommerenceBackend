@@ -1,8 +1,9 @@
-﻿using EcommerenceBackend.Application.Domain.Customers;
+﻿// EcommerenceBackend.Infrastructure/Configurations/OrderConfiguration.cs
 using EcommerenceBackend.Application.Domain.Orders;
-using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Application.Domain.Orders;
+using EcommerenceBackend.Application.Domain.Customers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Application.Domain.Orders;
 
 namespace EcommerenceBackend.Infrastructure.Configurations
 {
@@ -14,7 +15,11 @@ namespace EcommerenceBackend.Infrastructure.Configurations
 
             builder.Property(o => o.Id).HasConversion(
                 orderId => orderId.Value,
-                value => new OrderId(value));   
+                value => new OrderId(value));
+
+            builder.Property(o => o.CustomerId).HasConversion(
+                customerId => customerId.Value,
+                value => new CustomerId(value));
 
             builder.HasOne<Customer>()
                 .WithMany()
@@ -23,7 +28,10 @@ namespace EcommerenceBackend.Infrastructure.Configurations
 
             builder.HasMany(o => o.OrderItems)
                 .WithOne()
-                .HasForeignKey(li => li.OrderId);
+                .HasForeignKey(oi => oi.OrderId)
+                .IsRequired();
+
+            // Configure other properties if needed
         }
     }
 }

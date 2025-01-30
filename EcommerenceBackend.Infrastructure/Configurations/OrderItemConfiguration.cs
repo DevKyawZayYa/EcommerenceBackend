@@ -1,13 +1,10 @@
-﻿using EcommerenceBackend.Application.Domain.Orders;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EcommerenceBackend.Application.Domain.Products;
+﻿// EcommerenceBackend.Infrastructure/Configurations/OrderItemConfiguration.cs
+using EcommerenceBackend.Application.Domain.Orders;
 using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Application.Domain.Orders;
+using EcommerenceBackend.Application.Domain.Products;
+using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EcommerenceBackend.Infrastructure.Configurations
 {
@@ -15,17 +12,29 @@ namespace EcommerenceBackend.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
-            builder.HasKey(li => li.Id);
+            builder.HasKey(oi => oi.Id);
 
-            builder.Property(li => li.Id).HasConversion(
-                OrderItemId => OrderItemId.Value,
+            builder.Property(oi => oi.Id).HasConversion(
+                orderItemId => orderItemId.Value,
                 value => new OrderItemId(value));
 
-            builder.HasOne<Product>()
-                .WithMany()
-                .HasForeignKey(o => o.ProductId);
+            builder.Property(oi => oi.OrderId).HasConversion(
+                orderId => orderId.Value,
+                value => new OrderId(value));
 
-            builder.OwnsOne(li => li.Price);
+            builder.Property(oi => oi.ProductId).HasConversion(
+                productId => productId.Value,
+                value => new ProductId(value));
+
+            builder.OwnsOne(oi => oi.Price, price =>
+            {
+                price.Property(p => p.Amount).HasColumnName("Price");
+            });
+
+            builder.OwnsOne(oi => oi.Quantity, quantity =>
+            {
+                quantity.Property(q => q.Amount).HasColumnName("Quantity");
+            });
         }
     }
 }

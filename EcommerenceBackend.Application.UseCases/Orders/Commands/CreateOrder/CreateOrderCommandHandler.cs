@@ -1,0 +1,55 @@
+﻿using AutoMapper;
+using EcommerenceBackend.Application.Domain.Orders;
+using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Application.Domain.Orders;
+using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
+using EcommerenceBackend.Application.Domain.Products;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder
+{
+    public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Guid>
+    {
+        private readonly ApplicationDbContext _dbContext;
+        private readonly IMapper _mapper;
+
+        public CreateOrderCommandHandler(ApplicationDbContext dbContext, IMapper mapper)
+        {
+            _dbContext = dbContext;
+            _mapper = mapper;
+        }
+
+        public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+        {
+            var orderItems = request.Items.Select(dto =>
+                new OrderItem(
+                    OrderItemId.Create(Guid.NewGuid()),
+                    null, // OrderId null now
+                    new ProductId(dto.ProductId),
+                    new Money(dto.Price),
+                    new Money(dto.Quantity) 
+                )
+            ).ToList();
+
+            var order = new Order(
+                request.CustomerId,
+                orderItems,
+                request.TaxAmount,
+                request.ShippingCost,
+                request.DiscountAmount,
+                request.Status ?? "Pending",
+                request.PaymentStatus ?? "Unpaid",
+                request.DeliveryStatus ?? "Processing"
+            );
+
+            await _dbContext.Orders.AddAsync(order, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken); 
+            return order.Id.Value;
+        }
+
+    }
+}

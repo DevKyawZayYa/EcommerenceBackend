@@ -1,16 +1,18 @@
 ﻿namespace EcommerenceBackend.Application.Domain.Products
 {
+    // EcommerenceBackend.Application.Domain/Products/Money.cs
     public class Money
     {
         public decimal Amount { get; private set; }
 
-        // Parameterless constructor for EF Core
-        private Money() { }
+        private Money() { } // Required for EF Core
 
-        // Constructor with parameters for business logic
         public Money(decimal amount)
         {
             Amount = amount;
         }
+
+        public static implicit operator decimal(Money money) => money.Amount;
+        public static explicit operator Money(decimal amount) => new(amount);
     }
 }

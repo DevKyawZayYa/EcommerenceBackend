@@ -1,4 +1,5 @@
-﻿using EcommerenceBackend.Application.Domain.Customers;
+﻿// EcommerenceBackend.Infrastructure/ApplicationDbContext.cs
+using EcommerenceBackend.Application.Domain.Customers;
 using EcommerenceBackend.Application.Domain.Orders;
 using EcommerenceBackend.Application.Domain.Products;
 using EcommerenceBackend.Application.Domain.Users;
@@ -19,7 +20,9 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
+
+        // Apply all configurations from the current assembly
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 }

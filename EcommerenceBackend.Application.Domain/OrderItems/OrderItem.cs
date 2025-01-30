@@ -8,16 +8,19 @@ public class OrderItem
     public OrderId OrderId { get; private set; }
     public ProductId ProductId { get; private set; }
     public Money Price { get; private set; }
+    public Money Quantity { get; private set; }
 
     // Parameterless constructor for EF Core
     private OrderItem() { }
 
     // Constructor with parameters for business logic
-    public OrderItem(OrderItemId id, OrderId orderId, ProductId productId, Money price)
+    public OrderItem(OrderItemId id, OrderId orderId, ProductId productId, Money price, Money quantity)
     {
         Id = id;
         OrderId = orderId;
         ProductId = productId;
         Price = price;
+        Quantity = quantity;
     }
+    public Product Products { get; set; }
 }
