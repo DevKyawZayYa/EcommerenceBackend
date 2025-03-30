@@ -27,7 +27,7 @@ namespace EcommerenceBackend.WebApi.Controllers
             return Ok(CreatedAtAction(nameof(GetOrderById), new { id = orderId }, new { OrderId = orderId }));
         }
 
-        [HttpPost("get-order-by-id")]
+        [HttpPost("getOrderById")]
         public async Task<IActionResult> GetOrderById([FromBody] OrderRequest request)
         {
             var orderId = request.OrderId;

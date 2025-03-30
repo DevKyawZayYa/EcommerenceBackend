@@ -79,5 +79,6 @@ namespace EcommerenceBackend.Application.Domain.ShoppingCart
         }
 
         public void UpdateQuantity(int quantity) => Quantity = quantity;
+        public Product Products { get; set; }
     }
 }
