@@ -17,10 +17,12 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
+    <PackageReference Include="Stripe.net" Version="47.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EcommerenceBackend.Application.Domain\EcommerenceBackend.Application.Domain.csproj" />
+    <ProjectReference Include="..\EcommerenceBackend.Application.Dto\EcommerenceBackend.Application.Dto.csproj" />
   </ItemGroup>
 
 </Project>

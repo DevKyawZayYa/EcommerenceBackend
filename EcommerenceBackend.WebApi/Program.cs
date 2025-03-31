@@ -1,7 +1,10 @@
+using EcommerenceBackend.Application.Interface.Interfaces;
 using EcommerenceBackend.Application.UseCases.Configurations;
 using EcommerenceBackend.Infrastructure.Configurations;
 using EcommerenceBackend.Infrastructure.Contexts;
+using EcommerenceBackend.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,13 @@ builder.Services.AddCustomDbContexts(builder.Configuration);
 builder.Services.ConfigureRepositories(builder.Configuration);
 builder.Services.AddFluentValidationServices();
 builder.Services.AddJwtAuthentication(builder.Configuration);
+
+//Stripe
+
+var stripeSettings = builder.Configuration.GetSection("Stripe");
+StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
+
+builder.Services.AddScoped<IStripeService, StripeService>();
 
 // Add CORS 
 builder.Services.AddCors(options =>
