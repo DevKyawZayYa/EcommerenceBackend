@@ -3,6 +3,7 @@ using EcommerenceBackend.Application.UseCases.Reviews.Queries.GetReviewByProduct
 using EcommerenceBackend.Application.UseCases.Shipment.Commands;
 using EcommerenceBackend.Application.UseCases.Shipment.Queries.GetShipmentById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,8 @@ namespace EcommerenceBackend.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class ShipmentController : ControllerBase
     {
         private readonly IMediator _mediator;

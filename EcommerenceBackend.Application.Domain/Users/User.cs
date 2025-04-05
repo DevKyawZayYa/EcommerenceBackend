@@ -16,6 +16,8 @@ namespace EcommerenceBackend.Application.Domain.Users
         public string? Email { get; set; }
         public bool IsActive { get; set; }
         public string? Password { get; set; } // Secured access
+        public string? Gender { get; set; }
+        public DateTime? DOB { get; set; }
         public string? City { get; set; }
         public string? MobileCode { get; set; }
         public string? MobileNumber { get; set; }

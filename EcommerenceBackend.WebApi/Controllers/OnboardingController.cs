@@ -1,6 +1,7 @@
 ﻿using EcommerenceBackend.Application.UseCases.Onboarding.Commands.LoginUser;
 using EcommerenceBackend.Application.UseCases.Onboarding.Commands.RegisterUser;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

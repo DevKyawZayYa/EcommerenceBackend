@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerenceBackend.Infrastr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerenceBackend.WebApi", "EcommerenceBackend.WebApi\EcommerenceBackend.WebApi.csproj", "{D6A3A26F-57BF-46E7-9279-D7FE0FF354A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcommerenceBackend.Application.Interfaces", "EcommerenceBackend.Application.Interfaces\EcommerenceBackend.Application.Interfaces.csproj", "{B17CDD45-7147-453E-8719-FD5A5F422DEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{D6A3A26F-57BF-46E7-9279-D7FE0FF354A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6A3A26F-57BF-46E7-9279-D7FE0FF354A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6A3A26F-57BF-46E7-9279-D7FE0FF354A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B17CDD45-7147-453E-8719-FD5A5F422DEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B17CDD45-7147-453E-8719-FD5A5F422DEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B17CDD45-7147-453E-8719-FD5A5F422DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B17CDD45-7147-453E-8719-FD5A5F422DEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,5 +63,6 @@ Global
 		{AE66221A-E06A-45AD-BEA7-39AC71050FED} = {B01330B8-3AA5-4659-844E-5F7AB2F4AFEC}
 		{F679C818-3BBB-4E1F-9FB4-E7B56F7A38C6} = {67111F11-D76A-461F-8F22-728D86096329}
 		{D6A3A26F-57BF-46E7-9279-D7FE0FF354A2} = {80AE0D38-7740-4449-A6D3-C9D61BD9546D}
+		{B17CDD45-7147-453E-8719-FD5A5F422DEA} = {91278129-B827-4E53-BE91-718E95D2AA02}
 	EndGlobalSection
 EndGlobal

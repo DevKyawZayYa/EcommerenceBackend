@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="ShoppingCart\Commands\RemoveItem\" />
     <Folder Include="ShoppingCart\Commands\UpdateCartItem\" />
-    <Folder Include="Users\Commands\" />
   </ItemGroup>
 
   <ItemGroup>

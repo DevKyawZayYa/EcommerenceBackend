@@ -4,6 +4,7 @@ using EcommerenceBackend.Application.Dto.Orders.Response;
 using EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder;
 using EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,8 @@ namespace EcommerenceBackend.WebApi.Controllers
 {
     [ApiController]
     [Route("api/orders")]
+    [Authorize]
+
     public class OrderController : ControllerBase
     {
         private readonly IMediator _mediator;

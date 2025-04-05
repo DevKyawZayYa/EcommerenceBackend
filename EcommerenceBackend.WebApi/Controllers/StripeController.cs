@@ -1,5 +1,6 @@
 ﻿using EcommerenceBackend.Application.UseCases.Stripe.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,8 @@ namespace EcommerenceBackend.WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
+
     public class StripeController : ControllerBase
     {
         private readonly IMediator _mediator;

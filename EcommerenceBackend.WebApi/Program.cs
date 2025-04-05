@@ -1,5 +1,5 @@
-using EcommerenceBackend.Application.Interface.Interfaces;
 using EcommerenceBackend.Application.UseCases.Configurations;
+using EcommerenceBackend.Infrastructure;
 using EcommerenceBackend.Infrastructure.Configurations;
 using EcommerenceBackend.Infrastructure.Contexts;
 using EcommerenceBackend.Infrastructure.Services;
@@ -26,7 +26,9 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 var stripeSettings = builder.Configuration.GetSection("Stripe");
 StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
 
-builder.Services.AddScoped<IStripeService, StripeService>();
+//Dependency Injection
+builder.Services.AddInfrastructureServices();
+
 
 // Add CORS 
 builder.Services.AddCors(options =>

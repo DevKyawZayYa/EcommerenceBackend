@@ -9,11 +9,14 @@ using EcommerenceBackend.Application.UseCases.Products.Commands.UpdateProduct;
 using EcommerenceBackend.Application.UseCases.Products.Queries.GetAllProducts;
 using EcommerenceBackend.Application.UseCases.Products.Commands.DeleteProduct;
 using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EcommerenceBackend.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class ProductsController : ControllerBase
     {
         private readonly IMediator _mediator;

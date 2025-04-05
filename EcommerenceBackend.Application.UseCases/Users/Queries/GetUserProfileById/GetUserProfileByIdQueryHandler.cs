@@ -23,10 +23,13 @@ namespace EcommerenceBackend.Application.UseCases.Queries.GetUserProfileById
 
             return new GetUserProfileByIdResponse
             {
+                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
                 City = user.City,
+                Gender = user.Gender,
+                DOB = user.DOB,
                 MobileCode = user.MobileCode,
                 MobileNumber = user.MobileNumber,
                 Address = user.Address,

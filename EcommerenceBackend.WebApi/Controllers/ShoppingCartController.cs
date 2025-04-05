@@ -7,6 +7,7 @@ using EcommerenceBackend.Application.UseCases.ShoppingCart.Commands;
 using EcommerenceBackend.Application.UseCases.ShoppingCart.Commands.AddToCart;
 using EcommerenceBackend.Application.UseCases.ShoppingCart.Queries.GetCartItemsByCustomerId;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace EcommerenceBackend.WebApi.Controllers
 {
     [ApiController]
     [Route("api/cart")]
+    [Authorize]
     public class ShoppingCartController : ControllerBase
     {
         private readonly IMediator _mediator;

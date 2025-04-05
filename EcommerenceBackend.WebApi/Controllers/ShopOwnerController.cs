@@ -1,6 +1,7 @@
 ﻿using EcommerenceBackend.Application.UseCases.Shops.Commands.CreateShopOwner;
 using EcommerenceBackend.Application.UseCases.Shops.Queries.GetShopOwnerByIdQuery;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,8 @@ namespace EcommerenceBackend.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class ShopOwnerController : ControllerBase
     {
         private readonly IMediator _mediator;

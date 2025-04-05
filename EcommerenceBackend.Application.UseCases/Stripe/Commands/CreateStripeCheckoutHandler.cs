@@ -1,5 +1,5 @@
 ﻿using EcommerenceBackend.Application.Dto.Stripe.Response;
-using EcommerenceBackend.Application.Interface.Interfaces;
+using EcommerenceBackend.Application.Interfaces.Interfaces;
 using MediatR;
 using System;
 using System.Collections.Generic;

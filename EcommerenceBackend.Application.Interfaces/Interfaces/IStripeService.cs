@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EcommerenceBackend.Application.Interface.Interfaces
+namespace EcommerenceBackend.Application.Interfaces.Interfaces
 {
     public interface IStripeService
     {

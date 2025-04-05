@@ -1,12 +1,12 @@
 ﻿using EcommerenceBackend.Application.Dto.ShoppingCart.Response;
 using EcommerenceBackend.Application.Dto.Stripe.Response;
-using EcommerenceBackend.Application.Interface.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Stripe.Checkout;
+using EcommerenceBackend.Application.Interfaces.Interfaces;
 
 
 namespace EcommerenceBackend.Infrastructure.Services
