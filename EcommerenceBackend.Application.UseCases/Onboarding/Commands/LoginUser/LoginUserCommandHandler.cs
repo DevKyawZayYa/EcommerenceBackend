@@ -1,4 +1,5 @@
 ﻿using EcommerenceBackend.Application.Dto.Users;
+using EcommerenceBackend.Application.Interfaces.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,69 +15,70 @@ namespace EcommerenceBackend.Application.UseCases.Onboarding.Commands.LoginUser
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IJwtService _jwtService;
 
-        public LoginUserCommandHandler(ApplicationDbContext context, IConfiguration configuration)
+        public LoginUserCommandHandler(ApplicationDbContext context, IConfiguration configuration, IJwtService jwtService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _jwtService = jwtService ?? throw new ArgumentNullException(nameof(jwtService));
         }
 
         public async Task<LoginUserResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
-            // Validate the user's credentials
+            // Step 1: Validate the user
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
                 throw new UnauthorizedAccessException("Invalid email or password.");
             }
 
-            // Retrieve JWT settings from appsettings.json
+            // Step 2: Retrieve JwtSettings from config
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var secretKey = jwtSettings["Secret"];
             var issuer = jwtSettings["Issuer"];
             var audience = jwtSettings["Audience"];
             var expirationInMinutes = int.Parse(jwtSettings["ExpirationInMinutes"]);
 
-            // Generate JWT token
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(secretKey);
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
+            // Step 3: Create access token
+            var claims = new[]
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id!.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email!),
-                    new Claim(ClaimTypes.Role, user.Role ?? "User")
-                }),
-                Expires = DateTime.UtcNow.AddMinutes(expirationInMinutes),
-                Issuer = issuer,
-                Audience = audience,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                new Claim(ClaimTypes.NameIdentifier, user.Id!.ToString()),
+                new Claim(ClaimTypes.Email, user.Email!),
+                new Claim(ClaimTypes.Role, user.Role ?? "User")
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(expirationInMinutes),
+                signingCredentials: creds
+            );
 
-            // Return the JWT token and a dummy refresh token
+            var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+            // Step 4: Generate and store refresh token
+            var refreshToken = _jwtService.GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            // Step 5: Return tokens
             return new LoginUserResponse
             {
-                AccessToken = tokenHandler.WriteToken(token),
-                RefreshToken = GenerateSecureRefreshToken(),
-                ExpirationTime = DateTime.UtcNow.AddMinutes(60), // Match your token expiration time
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                ExpirationTime = DateTime.UtcNow.AddMinutes(expirationInMinutes),
                 UserId = user.Id.ToString(),
-                Email = user.Email,
+                Email = user.Email!,
                 Role = user.Role ?? "User"
             };
-        }
-
-        private static string GenerateSecureRefreshToken()
-        {
-            var randomNumber = new byte[32];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomNumber);
-            }
-            return Convert.ToBase64String(randomNumber);
         }
     }
 }

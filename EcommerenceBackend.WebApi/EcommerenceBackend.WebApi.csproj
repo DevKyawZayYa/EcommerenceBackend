@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EcommerenceBackend.Application.Dto\EcommerenceBackend.Application.Dto.csproj" />
     <ProjectReference Include="..\EcommerenceBackend.Application.UseCases\EcommerenceBackend.Application.UseCases.csproj" />
     <ProjectReference Include="..\EcommerenceBackend.Infrastructure\EcommerenceBackend.Infrastructure.csproj" />
   </ItemGroup>

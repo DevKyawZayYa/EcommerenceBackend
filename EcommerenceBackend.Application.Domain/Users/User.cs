@@ -28,5 +28,7 @@ namespace EcommerenceBackend.Application.Domain.Users
         public string? Role { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? LastLoginDate { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
     }
 }

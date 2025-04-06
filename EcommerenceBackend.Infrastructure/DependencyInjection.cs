@@ -11,6 +11,7 @@ namespace EcommerenceBackend.Infrastructure
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IStripeService, StripeService>();
+            services.AddScoped<IJwtService, JwtService>();
 
             return services;
         }
