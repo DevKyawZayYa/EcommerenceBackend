@@ -3,6 +3,7 @@ using EcommerenceBackend.Application.Dto.Orders.Request;
 using EcommerenceBackend.Application.Dto.Orders.Response;
 using EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder;
 using EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderById;
+using EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderListByCustomerId;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,8 +13,6 @@ namespace EcommerenceBackend.WebApi.Controllers
 {
     [ApiController]
     [Route("api/orders")]
-    [Authorize]
-
     public class OrderController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -36,6 +35,15 @@ namespace EcommerenceBackend.WebApi.Controllers
             var orderId = request.OrderId;
             var customerId = request.CustomerId;
             var order = await _mediator.Send(new GetOrderByIdQuery(orderId!, customerId!));
+            if (order == null) return NotFound();
+            return Ok(order);
+        }
+
+        [HttpPost("getOrderListByCustomerId")]
+        public async Task<IActionResult> getOrderListByCustomerId([FromBody] OrderRequest request)
+        {
+            var customerId = request.CustomerId;
+            var order = await _mediator.Send(new GetOrderListByCustomerIdQuery( customerId!));
             if (order == null) return NotFound();
             return Ok(order);
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EcommerenceBackend.Application.Domain.Products;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,7 @@ namespace EcommerenceBackend.Application.Domain.Shops
         public string ContactInfo { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public bool IsVerified { get; set; }
+        public ICollection<Product> Products { get; set; } = new List<Product>();
+
     }
 }

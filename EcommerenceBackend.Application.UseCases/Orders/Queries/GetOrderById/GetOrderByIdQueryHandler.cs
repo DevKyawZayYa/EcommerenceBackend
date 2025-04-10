@@ -10,7 +10,7 @@ using EcommerenceBackend.Infrastructure.Contexts;
 
 namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderById
 {
-    public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDto>
+    public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, OrderDetailByIdDto>
     {
         private readonly OrderDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -21,7 +21,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderById
             _mapper = mapper;
         }
 
-        public async Task<OrderDto> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
+        public async Task<OrderDetailByIdDto> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
         {
             var query = _dbContext.Orders
                 .Include(o => o.OrderItems)
@@ -42,7 +42,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderById
 
             if (order == null) return null;
 
-            return _mapper.Map<OrderDto>(order);
+            return _mapper.Map<OrderDetailByIdDto>(order);
         }
     }
 }

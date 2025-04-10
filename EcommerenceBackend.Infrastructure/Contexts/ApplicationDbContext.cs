@@ -1,4 +1,5 @@
 ﻿// EcommerenceBackend.Infrastructure/ApplicationDbContext.cs
+using EcommerenceBackend.Application.Domain.Categories;
 using EcommerenceBackend.Application.Domain.Customers;
 using EcommerenceBackend.Application.Domain.Orders;
 using EcommerenceBackend.Application.Domain.Payments;
@@ -20,11 +21,12 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Customer> Customers { get; set; }
-    public DbSet<Shop> Shops { get; set; }
     public DbSet<ShopOwner> ShopOwners { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Shipment> Shipments { get; set; }
+    public DbSet<Shop> Shops { get; set; }
+    public DbSet<Category> Categories { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

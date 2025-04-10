@@ -12,6 +12,21 @@ public class OrderMappingProfile : Profile
             .ForMember(dest => dest.CustomerId, opt => opt.MapFrom(src => src.CustomerId.Value))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems));
 
+        CreateMap<Order, OrderDetailByIdDto>()
+          .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.DeliveryStatus))
+          .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+          .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount))
+          .ForMember(dest => dest.ShippingCost, opt => opt.MapFrom(src => src.ShippingCost))
+          .ForMember(dest => dest.GrandTotal, opt => opt.MapFrom(src => src.GrandTotal))
+          .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
+          .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems));
+
+        CreateMap<Order, OrderListByCustomerIdDto>()
+             .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.Id.Value))
+             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.DeliveryStatus))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.DeliveryStatus))
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems));  
+
         CreateMap<OrderItem, OrderItemDto>()
             .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId.Value))
             .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Products!.Name))

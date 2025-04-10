@@ -19,7 +19,7 @@ namespace EcommerenceBackend.WebApi.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("create-checkout-session")]
+        [HttpPost("createCheckoutSession")]
         public async Task<IActionResult> CreateCheckoutSession([FromBody] CreateStripeCheckoutCommand command)
         {
             var result = await _mediator.Send(command);

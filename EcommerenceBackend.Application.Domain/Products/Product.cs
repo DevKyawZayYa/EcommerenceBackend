@@ -15,6 +15,8 @@ namespace EcommerenceBackend.Application.Domain.Products
         public Money? Price { get; private set; }
         public Sku? Sku { get; private set; }
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public Guid? ShopId { get; private set; }
+        public Guid? CategoryId { get; private set; }
     }
 }
 

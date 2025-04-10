@@ -6,7 +6,7 @@ using System;
 
 namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderById
 {
-    public class GetOrderByIdQuery : IRequest<OrderDto>
+    public class GetOrderByIdQuery : IRequest<OrderDetailByIdDto>
     {
         public OrderId? OrderId { get; }
         public CustomerId? CustomerId { get; }
