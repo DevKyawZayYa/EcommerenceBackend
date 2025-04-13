@@ -14,9 +14,10 @@ namespace EcommerenceBackend.Application.Domain.ShoppingCart
 
         private readonly List<CartItem> _items = new();
         public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
+
         public DateTime UpdatedAt { get; private set; }
 
-        private ShoppingCart() { } // Required for EF Core
+        private ShoppingCart() { }
 
         public ShoppingCart(CustomerId customerId)
         {
@@ -25,6 +26,12 @@ namespace EcommerenceBackend.Application.Domain.ShoppingCart
             UpdatedAt = DateTime.UtcNow;
         }
 
+        public void ClearCart()
+        {
+            _items.Clear();
+            UpdatedAt = DateTime.UtcNow;
+        }
+        
         public void AddItem(ProductId productId, decimal price, int quantity)
         {
             var existingItem = _items.FirstOrDefault(i => i.ProductId == productId);
@@ -36,6 +43,7 @@ namespace EcommerenceBackend.Application.Domain.ShoppingCart
             {
                 _items.Add(new CartItem(productId, price, quantity));
             }
+
             UpdatedAt = DateTime.UtcNow;
         }
 
@@ -48,37 +56,9 @@ namespace EcommerenceBackend.Application.Domain.ShoppingCart
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void ClearCart()
-        {
-            _items.Clear();
-            UpdatedAt = DateTime.UtcNow;
-        }
-
         public decimal CalculateTotalPrice()
         {
             return _items.Sum(i => i.Price * i.Quantity);
         }
-    }
-
-    public class CartItem
-    {
-        public Guid Id  { get; private set; }
-        public Guid ShoppingCartId { get; private set; } 
-        public ProductId ProductId { get; private set; }
-        public decimal Price { get; private set; }
-        public int Quantity { get; private set; }
-
-        private CartItem() { } // Required for EF Core
-
-        public CartItem(ProductId productId, decimal price, int quantity)
-        {
-            Id = Guid.NewGuid();
-            ProductId = productId;
-            Price = price;
-            Quantity = quantity;
-        }
-
-        public void UpdateQuantity(int quantity) => Quantity = quantity;
-        public Product Products { get; set; }
     }
 }

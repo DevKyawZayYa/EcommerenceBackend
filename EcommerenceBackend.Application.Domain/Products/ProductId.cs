@@ -14,7 +14,6 @@ namespace EcommerenceBackend.Application.Domain.Products
         {
             public Guid Value { get; }
 
-            // Change the constructor to be public
             public ProductId(Guid value)
             {
                 Value = value;
@@ -22,13 +21,32 @@ namespace EcommerenceBackend.Application.Domain.Products
 
             public static ProductId Create(Guid value) => new ProductId(value);
 
-            public override bool Equals(object obj) => obj is ProductId other && Equals(other);
+            public override bool Equals(object? obj)
+            {
+                return obj is ProductId other && Value.Equals(other.Value);
+            }
 
-            public bool Equals(ProductId other) => Value.Equals(other.Value);
+            public bool Equals(ProductId? other)
+            {
+                return other is not null && Value.Equals(other.Value);
+            }
 
             public override int GetHashCode() => Value.GetHashCode();
 
             public override string ToString() => Value.ToString();
+
+            // ✅ Operator overloads for == and !=
+            public static bool operator ==(ProductId? left, ProductId? right)
+            {
+                if (left is null && right is null) return true;
+                if (left is null || right is null) return false;
+                return left.Value == right.Value;
+            }
+
+            public static bool operator !=(ProductId? left, ProductId? right)
+            {
+                return !(left == right);
+            }
         }
     }
 }

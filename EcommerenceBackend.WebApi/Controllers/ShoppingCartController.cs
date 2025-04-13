@@ -5,6 +5,9 @@ using EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderById;
 using EcommerenceBackend.Application.UseCases.Queries.GetUserProfileById;
 using EcommerenceBackend.Application.UseCases.ShoppingCart.Commands;
 using EcommerenceBackend.Application.UseCases.ShoppingCart.Commands.AddToCart;
+using EcommerenceBackend.Application.UseCases.ShoppingCart.Commands.RemoveCartItem;
+using EcommerenceBackend.Application.UseCases.ShoppingCart.Commands.RemoveCartItem.RemoveCartItemByCartItemId;
+using EcommerenceBackend.Application.UseCases.ShoppingCart.Commands.RemoveCartItem.RemoveCartItemByShoppingCartId;
 using EcommerenceBackend.Application.UseCases.ShoppingCart.Queries.GetCartItemsByCustomerId;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -26,8 +29,8 @@ namespace EcommerenceBackend.WebApi.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("add")]
-        public async Task<IActionResult> AddToCart([FromBody] AddToCartCommand command)
+        [HttpPost("addItem")]
+        public async Task<IActionResult> AddToCart([FromBody] AddCartItemCommand command)
         {
             var cartId = await _mediator.Send(command);
             return Ok(new { CartId = cartId });
@@ -40,5 +43,19 @@ namespace EcommerenceBackend.WebApi.Controllers
             var result = await _mediator.Send(query);
             return Ok(result);
         }
+        [HttpDelete("cartItemId")]
+        public async Task<IActionResult> RemoveCartItem(Guid cartItemId)
+        {
+            var query = new RemoveCartItemCommand(cartItemId);
+            var result = await _mediator.Send(query);
+            return result ? Ok(new { message = "Item removed" }) : NotFound(new { message = "Item not found" });
+        }
+        [HttpPost("clearCart")]
+        public async Task<IActionResult> ClearCart([FromQuery] Guid shoppingCartId)
+        {
+            var result = await _mediator.Send(new ClearCartCommand(shoppingCartId));
+            return result ? Ok(new { message = "Cart cleared" }) : NotFound(new { message = "Cart not found" });
+        }
+
     }
 }

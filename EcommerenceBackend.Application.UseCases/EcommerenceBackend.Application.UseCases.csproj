@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ShoppingCart\Commands\RemoveItem\" />
     <Folder Include="ShoppingCart\Commands\UpdateCartItem\" />
   </ItemGroup>
 

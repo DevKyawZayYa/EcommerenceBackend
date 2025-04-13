@@ -1,45 +1,49 @@
-﻿using AutoMapper;
-using EcommerenceBackend.Application.Domain.Customers;
-using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
-using EcommerenceBackend.Application.Domain.ShoppingCart;
+﻿using EcommerenceBackend.Application.Domain.ShoppingCart;
+using EcommerenceBackend.Application.UseCases.ShoppingCart.Commands.AddToCart;
 using EcommerenceBackend.Infrastructure.Contexts;
 using MediatR;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
-namespace EcommerenceBackend.Application.UseCases.ShoppingCart.Commands.AddToCart
+public class AddCartItemCommandHandler : IRequestHandler<AddCartItemCommand, Guid>
 {
-    public class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, Guid>
+    private readonly OrderDbContext _dbContext;
+
+    public AddCartItemCommandHandler(OrderDbContext dbContext)
     {
-        private readonly OrderDbContext _dbContext;
-        private readonly IMapper _mapper;
+        _dbContext = dbContext;
+    }
 
-        public AddToCartCommandHandler(OrderDbContext dbContext, IMapper mapper)
+    public async Task<Guid> Handle(AddCartItemCommand request, CancellationToken cancellationToken)
+    {
+        var cart = await _dbContext.ShoppingCarts
+            .Include(c => c.Items)
+            .FirstOrDefaultAsync(c => c.CustomerId == request.CustomerId, cancellationToken);
+
+        if (cart == null)
         {
-            _dbContext = dbContext;
-            _mapper = mapper;
+            // ✅ 1. Save cart first
+            cart = new ShoppingCart(request.CustomerId);
+            await _dbContext.ShoppingCarts.AddAsync(cart, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken); // Cart now has real ID
         }
 
-        public async Task<Guid> Handle(AddToCartCommand request, CancellationToken cancellationToken)
+        var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == request.ProductId);
+
+        if (existingItem != null)
         {
-            var cart = _dbContext.ShoppingCarts.FirstOrDefault(c => c.CustomerId == request.CustomerId);
-
-            if (cart == null)
-            {
-                cart = new Domain.ShoppingCart.ShoppingCart(request.CustomerId!);
-                await _dbContext.ShoppingCarts.AddAsync(cart, cancellationToken);
-            }
-
-            foreach (var item in request.Items)
-            {
-                cart.AddItem(new ProductId(item.ProductId!.Value), item.Price, item.Quantity);
-            }
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            return cart.ShoppingCartId;
+            existingItem.UpdateQuantity(existingItem.Quantity + request.Quantity);
+            _dbContext.Entry(existingItem).State = EntityState.Modified;
         }
+        else
+        {
+            cart.AddItem(request.ProductId, request.Price, request.Quantity);
+
+            var newItem = cart.Items.First(i => i.ProductId == request.ProductId);
+            _dbContext.Entry(newItem).State = EntityState.Added;
+        }
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return cart.ShoppingCartId;
     }
 }
