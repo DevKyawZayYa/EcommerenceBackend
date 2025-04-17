@@ -21,14 +21,16 @@ namespace EcommerenceBackend.Application.UseCases.Products.Queries.GetProductDet
 
         public async Task<ProductDetailsDto> Handle(GetProductDetailsByIdQuery request, CancellationToken cancellationToken)
         {
-            var product = await _dbContext.Products
+            var product = await _dbContext.Products.Include(p => p.ProductImages)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Id == request.ProductId, cancellationToken);
 
             if (product == null)
                 throw new KeyNotFoundException($"Product with ID {request.ProductId} was not found.");
 
-            return _mapper.Map<ProductDetailsDto>(product);
+            var dto = _mapper.Map<ProductDetailsDto>(product);
+
+            return dto;
         }
     }
 }

@@ -24,6 +24,11 @@ namespace EcommerenceBackend.Infrastructure.Configurations.Entities
             {
                 p.Property(s => s.Value).HasColumnName("Sku");
             });
+
+            builder.HasMany(p => p.ProductImages)
+                .WithOne()
+                .HasForeignKey(pi => pi.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
+﻿// Domain/Product.cs stays the same
+using EcommerenceBackend.Application.Domain.Images.ProductsImages;
+using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +19,7 @@ namespace EcommerenceBackend.Application.Domain.Products
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public Guid? ShopId { get; private set; }
         public Guid? CategoryId { get; private set; }
+
+        public List<ProductImages>? ProductImages { get; set; } = [];
     }
 }
-

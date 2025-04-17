@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EcommerenceBackend.Application.UseCases.Products.Queries.GetAllProducts
 {
-    public class GetAllProductsQuery : IRequest<PagedResult<ProductDetailsDto>>
+    public class GetAllProductsQuery : IRequest<PagedResult<ProductListDto>>
     {
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 10;

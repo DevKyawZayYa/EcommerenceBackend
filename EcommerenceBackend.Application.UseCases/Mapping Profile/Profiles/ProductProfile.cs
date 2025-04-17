@@ -18,7 +18,14 @@ namespace EcommerenceBackend.Application.UseCases.MappingProfile.Profiles
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
             ;
 
-            CreateMap<Product, ProductDetailsDto>();
+            CreateMap<Product, ProductListDto>()
+             .ForMember(dest => dest.PrimaryImageUrl, opt => opt.MapFrom(src => src.ProductImages!.ToList().Where(x => x.IsPrimary).FirstOrDefault()!.ImageUrl))
+              ;
+
+            CreateMap<Product, ProductDetailsDto>()
+               .ForMember(dest => dest.PrimaryImageUrl, opt => opt.MapFrom(src => src.ProductImages!.ToList().Where(x=> x.IsPrimary).FirstOrDefault()!.ImageUrl))
+               .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ProductImages!.ToList()))
+                ;
 
             CreateMap<UpdateProductCommand, Product>()
             .ForMember(dest => dest.Id, opt => opt.Ignore()); 

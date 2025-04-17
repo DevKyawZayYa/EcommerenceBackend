@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace EcommerenceBackend.Application.UseCases.Products.Queries.GetAllProducts
 {
-    public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, PagedResult<ProductDetailsDto>>
+    public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, PagedResult<ProductListDto>>
     {
         private readonly OrderDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -25,20 +25,21 @@ namespace EcommerenceBackend.Application.UseCases.Products.Queries.GetAllProduct
             _mapper = mapper;
         }
 
-        public async Task<PagedResult<ProductDetailsDto>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<ProductListDto>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
             var totalItems = await _dbContext.Products.CountAsync();
             int page = request!.Page;
             int pageSize = request!.PageSize;
 
-            var items = await _dbContext.Products
+            var items = await _dbContext.Products.AsSplitQuery().AsNoTracking()
+                .Include(p => p.ProductImages)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            var mappedItems = _mapper.Map<List<ProductDetailsDto>>(items);
+            var mappedItems = _mapper.Map<List<ProductListDto>>(items);
 
-            return new PagedResult<ProductDetailsDto>(mappedItems, totalItems, page, pageSize);
+            return new PagedResult<ProductListDto>(mappedItems, totalItems, page, pageSize);
         }
     }
 
