@@ -31,8 +31,10 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderListByC
             }
 
             var query = _dbContext.Orders.Where(o => o.CustomerId == request.CustomerId)
+                .AsSplitQuery()
+                .AsNoTracking()
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Products)
+                .ThenInclude(oi => oi.Products).ThenInclude(x=> x.ProductImages)
                 .AsQueryable();
 
             var orders = await query.ToListAsync(cancellationToken);

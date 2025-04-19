@@ -30,8 +30,9 @@ namespace EcommerenceBackend.Application.UseCases.ShoppingCart.Queries.GetCartIt
                 throw new ArgumentException("CustomerId cannot be empty.");
 
             var shoppingCart = await _context.ShoppingCarts
+                .AsSplitQuery()
                 .AsNoTracking()
-                .Include(c => c.Items).ThenInclude(i => i.Products)
+                .Include(c => c.Items).ThenInclude(i => i.Products).ThenInclude(i => i.ProductImages)
                 .FirstOrDefaultAsync(c => c.CustomerId == new CustomerId(request.CustomerId), cancellationToken);
 
             if (shoppingCart == null || !shoppingCart.Items.Any())

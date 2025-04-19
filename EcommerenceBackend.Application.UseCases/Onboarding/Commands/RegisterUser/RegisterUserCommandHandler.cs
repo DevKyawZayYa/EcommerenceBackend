@@ -42,6 +42,7 @@ namespace EcommerenceBackend.Application.UseCases.Onboarding.Commands.RegisterUs
 
             // Map the command to the User entity.
             var newUser = _mapper.Map<EcommerenceBackend.Application.Domain.Users.User>(request);
+            newUser.Id= new UserId(Guid.NewGuid()); // Generate a new ID for the user
             newUser.Password = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 12);
             newUser.CreatedDate = DateTime.UtcNow;
             newUser.IsActive = true;

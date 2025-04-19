@@ -29,6 +29,7 @@ public class OrderMappingProfile : Profile
 
         CreateMap<OrderItem, OrderItemDto>()
             .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId.Value))
+           .ForMember(dest => dest.PrimaryImageUrl, opt => opt.MapFrom(src => src.Products.ProductImages!.ToList().Where(x => x.IsPrimary).FirstOrDefault()!.ImageUrl))
             .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Products!.Name))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price.Amount))
             .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity.Amount));
