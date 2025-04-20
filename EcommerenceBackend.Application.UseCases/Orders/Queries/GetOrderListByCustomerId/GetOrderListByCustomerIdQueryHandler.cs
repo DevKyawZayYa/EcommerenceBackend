@@ -34,7 +34,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderListByC
                 .AsSplitQuery()
                 .AsNoTracking()
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Products).ThenInclude(x=> x.ProductImages)
+                .ThenInclude(oi => oi.Products).ThenInclude(x=> x.ProductImages).OrderByDescending(o => o.OrderDate)
                 .AsQueryable();
 
             var orders = await query.ToListAsync(cancellationToken);

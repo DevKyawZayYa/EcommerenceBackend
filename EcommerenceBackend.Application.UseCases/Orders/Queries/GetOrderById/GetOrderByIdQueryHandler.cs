@@ -24,8 +24,9 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderById
         public async Task<OrderDetailByIdDto> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
         {
             var query = _dbContext.Orders
+                .AsSplitQuery().AsNoTracking()
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Products)
+                .ThenInclude(oi => oi.Products).ThenInclude(x=> x.ProductImages)
                 .AsQueryable();
 
             if (request.OrderId != null)

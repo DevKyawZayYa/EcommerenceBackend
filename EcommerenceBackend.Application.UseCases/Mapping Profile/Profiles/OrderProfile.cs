@@ -19,7 +19,8 @@ public class OrderMappingProfile : Profile
           .ForMember(dest => dest.ShippingCost, opt => opt.MapFrom(src => src.ShippingCost))
           .ForMember(dest => dest.GrandTotal, opt => opt.MapFrom(src => src.GrandTotal))
           .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
-          .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems));
+          .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems))         
+          ;
 
         CreateMap<Order, OrderListByCustomerIdDto>()
              .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.Id.Value))

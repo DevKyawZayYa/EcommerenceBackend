@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using EcommerenceBackend.Application.Domain.Products;
+using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
 using EcommerenceBackend.Application.Dto.Products;
+using EcommerenceBackend.Application.Dto.Products.EcommerenceBackend.Application.Dto.Products;
 using EcommerenceBackend.Application.UseCases.Products.Commands.UpdateProduct;
 
 namespace EcommerenceBackend.Application.UseCases.MappingProfile.Profiles
@@ -9,6 +11,15 @@ namespace EcommerenceBackend.Application.UseCases.MappingProfile.Profiles
     {
         public ProductProfile()
         {
+
+            CreateMap<Product, ProductDto>()
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id!.Value)) // Map ProductId to Guid
+                    .ForMember(dest => dest.PrimaryImageUrl, opt => opt.MapFrom(src => src.ProductImages!.ToList().Where(x => x.IsPrimary).FirstOrDefault()!.ImageUrl))
+                    .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price!.Amount));
+
+            // Map ProductId to Guid
+            CreateMap<ProductId, Guid>().ConvertUsing(src => src.Value);
+
             CreateMap<CreateProductDto, Product>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore()) 
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))

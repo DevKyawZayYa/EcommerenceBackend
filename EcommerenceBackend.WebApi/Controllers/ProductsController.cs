@@ -10,13 +10,13 @@ using EcommerenceBackend.Application.UseCases.Products.Queries.GetAllProducts;
 using EcommerenceBackend.Application.UseCases.Products.Commands.DeleteProduct;
 using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
 using Microsoft.AspNetCore.Authorization;
+using EcommerenceBackend.Application.UseCases.Products.Queries.GetProductListByCategoryId;
+using EcommerenceBackend.Application.UseCases.Products.Queries.SearchProduct;
 
 namespace EcommerenceBackend.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-
     public class ProductsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -56,7 +56,14 @@ namespace EcommerenceBackend.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var query = new GetAllProductsQuery { Page = page, PageSize = pageSize };
+            var query = new GetAllProductsQuery {Page = page, PageSize = pageSize };
+            var products = await _mediator.Send(query);
+            return Ok(products);
+        }
+        [HttpGet("category/{CategoryId}")]
+        public async Task<IActionResult> GetProductsByCategoryId(Guid CategoryId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            var query = new GetProductListByCategoryIdQuery { CategoryId = CategoryId, Page = page, PageSize = pageSize };
             var products = await _mediator.Send(query);
             return Ok(products);
         }
@@ -68,6 +75,13 @@ namespace EcommerenceBackend.WebApi.Controllers
             var command = new DeleteProductCommand { ProductId = productId };
             var result = await _mediator.Send(command);
             return Ok(result ? NoContent() : NotFound());
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchProducts([FromQuery] SearchProductQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 }

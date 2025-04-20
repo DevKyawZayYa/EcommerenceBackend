@@ -22,7 +22,7 @@ namespace EcommerenceBackend.Application.UseCases.Categories.Queries.GetCategory
 
         public async Task<List<CategoryDto>> Handle(GetCategoryListQuery request, CancellationToken cancellationToken)
         {
-            var categories = await _dbContext.Categories
+            var categories = await _dbContext.Categories.Where(x=> x.IsShowNavBar == true)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
