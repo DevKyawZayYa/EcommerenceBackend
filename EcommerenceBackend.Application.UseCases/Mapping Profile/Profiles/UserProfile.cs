@@ -2,6 +2,7 @@
 using EcommerenceBackend.Application.Domain.Users;
 using EcommerenceBackend.Application.Dto.Users;
 using EcommerenceBackend.Application.UseCases.Onboarding.Commands.RegisterUser;
+using EcommerenceBackend.Application.UseCases.Queries.GetUserProfileById;
 using EcommerenceBackend.Application.UseCases.User.Queries.GetUserProfileByAllQuery;
 using EcommerenceBackend.Application.UseCases.Users.Commands.UpdateUserProfileById;
 
@@ -11,6 +12,8 @@ public class UserProfile : Profile
     {
         CreateMap<RegisterUserDto, RegisterUserCommand>();
         CreateMap<RegisterUserCommand, User>();
+
+        CreateMap<User, GetUserProfileByIdResponse>();
 
         CreateMap<User, UserProfileDto>()
           .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src!.Id!.Value))

@@ -12,6 +12,7 @@ namespace EcommerenceBackend.Infrastructure
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IStripeService, StripeService>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddSingleton<IRedisService, RedisService>();
 
             return services;
         }
