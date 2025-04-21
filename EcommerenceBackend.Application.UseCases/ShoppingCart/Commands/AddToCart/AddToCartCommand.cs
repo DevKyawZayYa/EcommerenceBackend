@@ -8,8 +8,8 @@ namespace EcommerenceBackend.Application.UseCases.ShoppingCart.Commands.AddToCar
 {
     public class AddCartItemCommand : IRequest<Guid>
     {
-        public CustomerId CustomerId { get; set; }
-        public ProductId ProductId { get; set; }
+        public CustomerId? CustomerId { get; set; }
+        public ProductId? ProductId { get; set; }
         public decimal Price { get; set; }
         public int Quantity { get; set; }
     }
