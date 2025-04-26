@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using EcommerenceBackend.Application.Domain.Products;
 using EcommerenceBackend.Application.Dto.Common;
 using EcommerenceBackend.Application.Dto.Products;
 using EcommerenceBackend.Application.Interfaces.Interfaces;
 using EcommerenceBackend.Infrastructure.Contexts;
-using EcommerenceBackend.Infrastructure.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -22,37 +20,43 @@ namespace EcommerenceBackend.Application.UseCases.Products.Queries.GetAllProduct
 
         public GetAllProductsQueryHandler(OrderDbContext dbContext, IMapper mapper, IRedisService cache)
         {
-            _dbContext = dbContext;
-            _mapper = mapper;
-            _cache = cache;
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
         public async Task<PagedResult<ProductListDto>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
-            int page = request!.Page;
-            int pageSize = request!.PageSize;
+            //Middleware usage
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
+            int page = request.Page;
+            int pageSize = request.PageSize;
+
             string cacheKey = $"products_all_page_{page}_size_{pageSize}";
 
-            // Try get from Redis
-            var cached = await _cache.GetAsync<PagedResult<ProductListDto>>(cacheKey);
-            if (cached is not null)
-                return cached;
+            var cachedResult = await _cache.GetAsync<PagedResult<ProductListDto>>(cacheKey);
+            if (cachedResult is not null)
+                return cachedResult;
 
             var totalItems = await _dbContext.Products.CountAsync(cancellationToken);
 
-            var items = await _dbContext.Products.AsSplitQuery().AsNoTracking()
+            var products = await _dbContext.Products
+                .AsSplitQuery()
+                .AsNoTracking()
                 .Include(p => p.ProductImages)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
 
-            var mappedItems = _mapper.Map<List<ProductListDto>>(items);
-            var result = new PagedResult<ProductListDto>(mappedItems, totalItems, page, pageSize);
+            var mappedProducts = _mapper.Map<List<ProductListDto>>(products);
 
-            // Cache for 10 minutes
-            await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(10));
+            var pagedResult = new PagedResult<ProductListDto>(mappedProducts, totalItems, page, pageSize);
 
-            return result;
+            // 3️⃣ Save to Redis
+            await _cache.SetAsync(cacheKey, pagedResult, TimeSpan.FromMinutes(10));
+
+            return pagedResult;
         }
     }
 }

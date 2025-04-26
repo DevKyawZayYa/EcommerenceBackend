@@ -1,3 +1,4 @@
+using EcommerenceBackend.API.Extensions;
 using EcommerenceBackend.Application.UseCases.Configurations;
 using EcommerenceBackend.Infrastructure;
 using EcommerenceBackend.Infrastructure.Configurations;
@@ -22,7 +23,6 @@ builder.Services.AddFluentValidationServices();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
 //Stripe
-
 var stripeSettings = builder.Configuration.GetSection("Stripe");
 StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
 
@@ -49,6 +49,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//MiddleWare
+app.UseExceptionHandling();
 
 // Add CORS 
 app.UseCors("AllowAll");

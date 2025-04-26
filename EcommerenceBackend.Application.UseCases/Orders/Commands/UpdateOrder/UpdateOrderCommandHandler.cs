@@ -27,7 +27,6 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.UpdateOrder
             var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.OrderId, cancellationToken);
             if (order == null) return false;
 
-            // ✅ Convert DTOs to domain models in UseCase Layer
             var updatedItems = request.UpdatedItems.Select(dto =>
                 new OrderItem(
                     OrderItemId.Create(Guid.NewGuid()),

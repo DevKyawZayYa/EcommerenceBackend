@@ -26,6 +26,9 @@ namespace EcommerenceBackend.Application.UseCases.Products.Queries.SearchProduct
 
         public async Task<PagedResult<ProductDto>> Handle(SearchProductQuery request, CancellationToken cancellationToken)
         {
+            //Middleware usage
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
             // Create a safe cache key based on filters
             var cacheKey = $"search_products_" +
                 $"{request.Name?.ToLower() ?? "any"}_" +

@@ -23,6 +23,9 @@ namespace EcommerenceBackend.Application.UseCases.Products.Queries.GetProductDet
 
         public async Task<ProductDetailsDto> Handle(GetProductDetailsByIdQuery request, CancellationToken cancellationToken)
         {
+            //Middleware usage
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
             var cacheKey = $"product_detail_{request.ProductId}";
 
             // 1️⃣ Try from Redis

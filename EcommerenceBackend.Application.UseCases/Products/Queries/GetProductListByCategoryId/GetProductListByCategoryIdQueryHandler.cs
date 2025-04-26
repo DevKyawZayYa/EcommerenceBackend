@@ -28,6 +28,9 @@ namespace EcommerenceBackend.Application.UseCases.Products.Queries.GetProductLis
 
         public async Task<PagedResult<ProductListDto>> Handle(GetProductListByCategoryIdQuery request, CancellationToken cancellationToken)
         {
+            //Middleware usage
+            if (request == null) throw new ArgumentNullException(nameof(request));
+
             int page = request!.Page;
             int pageSize = request!.PageSize;
             string cacheKey = $"product_list_cat_{request.CategoryId}_page_{page}_size_{pageSize}";

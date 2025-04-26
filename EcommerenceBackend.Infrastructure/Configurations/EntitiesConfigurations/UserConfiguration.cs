@@ -20,16 +20,7 @@ namespace EcommerenceBackend.Infrastructure.Configurations.Entities
 
             builder.Property(u => u.Id).HasConversion(
                 userId => userId.Value,
-                value => new UserId(value));
-
-            builder.Property(u => u.FirstName).HasConversion(
-             firstName => firstName.Value,
-             value => new FirstName(value));
-
-            builder.Property(u => u.LastName).HasConversion(
-                lirstName => lirstName.Value,
-                value => new LastName(value));
-
+                value => new UserId(value));     
         }
     }
 }

@@ -2,6 +2,7 @@
 using EcommerenceBackend.Application.Dto.ApplicationUser.Request;
 using EcommerenceBackend.Application.Dto.ApplicationUser.Response;
 using EcommerenceBackend.Application.Interfaces.Interfaces;
+using EcommerenceBackend.Application.UseCases.Onboarding.Commands.ChangePassword;
 using EcommerenceBackend.Application.UseCases.Onboarding.Commands.LoginUser;
 using EcommerenceBackend.Application.UseCases.Onboarding.Commands.RegisterUser;
 using MediatR;
@@ -42,6 +43,32 @@ namespace EcommerenceBackend.WebApi.Controllers
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+
+        [HttpPost("changePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+            {
+                if (result.Message == "User not found.")
+                {
+                    return NotFound(new { Message = result.Message, Errors = result.Errors });
+                }
+                else if (result.Message == "Current password is incorrect.")
+                {
+                    return BadRequest(new { Message = result.Message, Errors = result.Errors });
+                }
+                else
+                {
+                    return StatusCode(500, new { Message = result.Message, Errors = result.Errors });
+                }
+            }
+
+            return Ok(new { Message = result.Message });
+        }
+
+
 
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh([FromBody] TokenRequestDto tokenRequest)

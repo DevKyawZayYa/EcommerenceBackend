@@ -11,8 +11,8 @@ namespace EcommerenceBackend.Application.Domain.Users
     public class User
     {
         public UserId? Id { get; set; }
-        public FirstName? FirstName { get; set; }
-        public LastName? LastName { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public string? Email { get; set; }
         public bool IsActive { get; set; }
         public string? Password { get; set; } // Secured access

@@ -35,7 +35,6 @@ namespace EcommerenceBackend.Application.Domain.Products
 
             public override string ToString() => Value.ToString();
 
-            // ✅ Operator overloads for == and !=
             public static bool operator ==(ProductId? left, ProductId? right)
             {
                 if (left is null && right is null) return true;

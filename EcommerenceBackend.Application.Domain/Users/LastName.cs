@@ -17,5 +17,10 @@ namespace EcommerenceBackend.Application.Domain.Users
 
             Value = value;
         }
+
+        public static implicit operator LastName(string v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

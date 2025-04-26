@@ -60,9 +60,9 @@ namespace EcommerenceBackend.Infrastructure.Services
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(jwtSection["Secret"]!)
                 ),
-                ValidateLifetime = false, // ❗ Skip expiry check
-                ValidIssuer = jwtSection["Issuer"],       // ✅ Same as generation
-                ValidAudience = jwtSection["Audience"],   // ✅ Same as generation
+                ValidateLifetime = false, //  Skip expiry check
+                ValidIssuer = jwtSection["Issuer"],       
+                ValidAudience = jwtSection["Audience"],   
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

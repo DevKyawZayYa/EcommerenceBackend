@@ -17,8 +17,8 @@ public class UserProfile : Profile
 
         CreateMap<User, UserProfileDto>()
           .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src!.Id!.Value))
-          .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName!.Value))
-          .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName!.Value))
+          .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+          .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
           ;
 
         CreateMap<UpdateUserProfileByIdCommand, User>()

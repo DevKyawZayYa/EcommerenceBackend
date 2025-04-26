@@ -21,7 +21,6 @@ public class AddCartItemCommandHandler : IRequestHandler<AddCartItemCommand, Gui
 
         if (cart == null)
         {
-            // ✅ 1. Save cart first
             cart = new ShoppingCart(request.CustomerId);
             await _dbContext.ShoppingCarts.AddAsync(cart, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken); // Cart now has real ID
