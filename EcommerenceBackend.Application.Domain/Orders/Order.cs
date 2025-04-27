@@ -4,10 +4,13 @@ using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Applicatio
 using EcommerenceBackend.Application.Domain.Products;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace EcommerenceBackend.Application.Domain.Orders
 {
+    [Table("orders")]
+
     public class Order
     {
         private readonly HashSet<OrderItem> _orderItems = new();

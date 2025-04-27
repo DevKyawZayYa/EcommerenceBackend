@@ -2,12 +2,15 @@
 using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace EcommerenceBackend.Application.Domain.ShoppingCart
 {
+    [Table("cartitems")]
+
     public class CartItem
     {
         public Guid Id { get; private set; }

@@ -22,15 +22,14 @@ builder.Services.ConfigureRepositories(builder.Configuration);
 builder.Services.AddFluentValidationServices();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
-//Stripe
+// Stripe
 var stripeSettings = builder.Configuration.GetSection("Stripe");
 StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
 
-//Dependency Injection
+// Dependency Injection
 builder.Services.AddInfrastructureServices();
 
-
-// Add CORS 
+// Add CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -44,19 +43,20 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-//MiddleWare
+// Middleware
 app.UseExceptionHandling();
 
-// Add CORS 
+// Add CORS
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
+
 app.MapControllers();
 app.Run();

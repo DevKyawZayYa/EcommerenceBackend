@@ -1,7 +1,9 @@
 ﻿using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Application.Domain.Orders;
 using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
 using EcommerenceBackend.Application.Domain.Products;
+using System.ComponentModel.DataAnnotations.Schema;
 
+[Table("orderitems")]
 public class OrderItem
 {
     public OrderItemId Id { get; private set; }

@@ -1,12 +1,14 @@
 ﻿using EcommerenceBackend.Application.Domain.Products;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace EcommerenceBackend.Application.Domain.Categories
 {
+    [Table("categories")]
     public class Category
     {
         public Guid Id { get; set; }

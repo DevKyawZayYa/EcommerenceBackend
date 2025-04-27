@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace EcommerenceBackend.Application.Domain.Shipment
 {
+    [Table("shipments")]
+
     public class Shipment
     {
         public Guid ShipmentID { get; set; } = Guid.NewGuid();

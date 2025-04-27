@@ -3,10 +3,13 @@ using EcommerenceBackend.Application.Domain.Products;
 using EcommerenceBackend.Application.Domain.Products.EcommerenceBackend.Application.Domain.Products;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace EcommerenceBackend.Application.Domain.ShoppingCart
 {
+    [Table("shoppingcarts")]
+
     public class ShoppingCart
     {
         public Guid ShoppingCartId { get; private set; }

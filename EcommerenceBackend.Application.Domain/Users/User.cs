@@ -2,12 +2,14 @@
 using EcommerenceBackend.Application.Domain.Users;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace EcommerenceBackend.Application.Domain.Users
 {
+    [Table("users")]
     public class User
     {
         public UserId? Id { get; set; }

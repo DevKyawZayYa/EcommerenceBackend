@@ -1,12 +1,15 @@
 ﻿using EcommerenceBackend.Application.Domain.Users;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace EcommerenceBackend.Application.Domain.Customers
 {
+    [Table("customers")]
+
     public class Customer
     {
         public CustomerId? Id { get; private set; }
