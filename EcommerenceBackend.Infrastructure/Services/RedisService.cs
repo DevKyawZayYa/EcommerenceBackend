@@ -1,11 +1,8 @@
 ﻿using EcommerenceBackend.Application.Interfaces.Interfaces;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -13,29 +10,68 @@ namespace EcommerenceBackend.Infrastructure.Services
 {
     public class RedisService : IRedisService
     {
-        private readonly StackExchange.Redis.IDatabase _db;
+        private readonly IDatabase? _db;
+        private readonly ILogger<RedisService> _logger;
 
-        public RedisService(IConfiguration config)
+        public RedisService(IConfiguration config, ILogger<RedisService> logger)
         {
-            var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]);
-            _db = redis.GetDatabase();
+            _logger = logger;
+
+            try
+            {
+                var redis = ConnectionMultiplexer.Connect(config["Redis:ConnectionString"]);
+                _db = redis.GetDatabase();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to connect to Redis. Redis caching will be skipped.");
+                _db = null;
+            }
         }
 
         public async Task<T?> GetAsync<T>(string key)
         {
-            var value = await _db.StringGetAsync(key);
-            return value.IsNullOrEmpty ? default : JsonSerializer.Deserialize<T>(value);
+            if (_db == null) return default;
+
+            try
+            {
+                var value = await _db.StringGetAsync(key);
+                return value.IsNullOrEmpty ? default : JsonSerializer.Deserialize<T>(value);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, $"Redis GET failed for key: {key}");
+                return default;
+            }
         }
 
         public async Task SetAsync<T>(string key, T value, TimeSpan? expiry = null)
         {
-            var json = JsonSerializer.Serialize(value);
-            await _db.StringSetAsync(key, json, expiry);
+            if (_db == null) return;
+
+            try
+            {
+                var json = JsonSerializer.Serialize(value);
+                await _db.StringSetAsync(key, json, expiry);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, $"Redis SET failed for key: {key}");
+            }
         }
 
         public async Task RemoveAsync(string key)
         {
-            await _db.KeyDeleteAsync(key);
+            if (_db == null) return;
+
+            try
+            {
+                await _db.KeyDeleteAsync(key);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, $"Redis REMOVE failed for key: {key}");
+            }
         }
     }
 }
