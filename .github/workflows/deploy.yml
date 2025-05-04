@@ -35,21 +35,28 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} <<'EOF'
             echo "✅ Connected to EC2. Starting backend deployment..."
 
-            # Clean and unzip
+           # Clean old folder and unzip latest
             rm -rf ~/EcommerenceBackend
             unzip -o ~/EcommerenceBackend.zip -d ~/EcommerenceBackend
+
             cd ~/EcommerenceBackend
 
-            # Stop and remove old containers
-            sudo docker compose down || true
-
-            # Remove old image manually if exists
-            if sudo docker images --format '{{.Repository}}' | grep -Eq '^ecommerencebackend-ecommercebackend-webapi$'; then
-              sudo docker rmi ecommerencebackend-ecommercebackend-webapi || true
+            # Stop and remove old container
+            if sudo docker ps -a --format '{{.Names}}' | grep -Eq '^ecommercebackend-webapi$'; then
+              sudo docker stop ecommercebackend-webapi
+              sudo docker rm ecommercebackend-webapi
             fi
 
-            # Build and start containers
-            sudo docker compose up -d --build
+            # Remove old image
+            if sudo docker images --format '{{.Repository}}' | grep -Eq '^ecommerencebackend-ecommercebackend-webapi$'; then
+              sudo docker rmi ecommerencebackend-ecommercebackend-webapi
+            fi
+
+            # Build image manually (not docker compose)
+            sudo docker build -t ecommerencebackend-ecommercebackend-webapi .
+
+            # Run new container on port 5000:8080
+            sudo docker run -d -p 5000:8080 --name ecommercebackend-webapi ecommerencebackend-ecommercebackend-webapi
 
             echo "✅ Backend deployed and running on port 5000."
           EOF
