@@ -12,19 +12,22 @@ jobs:
     environment: main
 
     steps:
+      # Step 1: Checkout the code from the master branch
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Create Zip Package (include root Docker/Docker-compose)
+      # Step 2: Create a ZIP package with Docker files and backend project
+      - name: Create Zip Package
         run: |
           mkdir upload
-          cp -r EcommerenceBackend/EcommerenceBackend upload/EcommerenceBackend
-          cp EcommerenceBackend/Dockerfile EcommerenceBackend/docker-compose.yml EcommerenceBackend/.dockerignore upload/
+          cp -r EcommerenceBackend upload/EcommerenceBackend
+          cp Dockerfile docker-compose.yml .dockerignore upload/
           cd upload
           zip -r ../EcommerenceBackend.zip .
           cd ..
           ls -lh EcommerenceBackend.zip
 
+      # Step 3: Setup SSH access to EC2 instance using secrets
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -32,30 +35,32 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts || true
 
+      # Step 4: Upload the ZIP to the EC2 server
       - name: Upload Zip to EC2
         run: |
           scp -o StrictHostKeyChecking=no EcommerenceBackend.zip ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/EcommerenceBackend.zip
 
+      # Step 5: Connect to EC2 and deploy the Docker container
       - name: Deploy on EC2
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             echo "✅ Connected to EC2"
 
-            # Remove old container/image if exists
+            # Stop and remove existing container and image if they exist
             sudo docker stop ecommercebackend-webapi || true
             sudo docker rm ecommercebackend-webapi || true
             sudo docker rmi ecommerencebackend-ecommercebackend-webapi || true
 
-            # Clean old folder and unzip
+            # Clean up and unzip new code
             rm -rf ~/EcommerenceBackend
             unzip -o ~/EcommerenceBackend.zip -d ~/EcommerenceBackend
 
-            # Move to folder and build
+            # Build Docker image
             cd ~/EcommerenceBackend
             sudo docker build -t ecommerencebackend-ecommercebackend-webapi .
 
-            # Run container on port 5000 -> 8080
+            # Run Docker container on port 5000 -> 8080
             sudo docker run -d -p 5000:8080 --name ecommercebackend-webapi ecommerencebackend-ecommercebackend-webapi
 
-            echo "✅ Backend Deployed Successfully on port 5000"
+            echo "✅ Backend Deployed Successfully"
           EOF
