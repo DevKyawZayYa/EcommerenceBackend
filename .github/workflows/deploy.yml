@@ -20,12 +20,13 @@ jobs:
       - name: Create Zip Package
         run: |
           mkdir upload
-          cp -r EcommerenceBackend upload/EcommerenceBackend
-          cp Dockerfile docker-compose.yml .dockerignore upload/
+          cp -r * upload/
+          cp -r .[!.]* upload/
           cd upload
           zip -r ../EcommerenceBackend.zip .
           cd ..
           ls -lh EcommerenceBackend.zip
+
 
       # Step 3: Setup SSH access to EC2 instance using secrets
       - name: Setup SSH
