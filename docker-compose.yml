@@ -1,0 +1,24 @@
+﻿version: "3.8"
+
+services:
+  ecommercebackend-webapi:
+    container_name: ecommercebackend-webapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__NorthwindConnection=Server=ecommerence-db.cv4m6i28e0a7.ap-southeast-1.rds.amazonaws.com;Database=ecommerencedb;User=admin;Password=Kzytesting123;
+      - Redis__ConnectionString=redis:6379  
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
