@@ -7,17 +7,23 @@ on:
 
 jobs:
   deploy:
-    name: Deploy .NET Backend App to EC2
+    name: Deploy .NET Backend to EC2
     runs-on: ubuntu-latest
     environment: main
 
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Zip Backend Project (exclude .git)
+      - name: Create Zip Package (include root Docker/Docker-compose)
         run: |
-          zip -r EcommerenceBackend.zip . -x "*.git*"
+          mkdir upload
+          cp -r EcommerenceBackend upload/EcommerenceBackend
+          cp Dockerfile docker-compose.yml .dockerignore upload/
+          cd upload
+          zip -r ../EcommerenceBackend.zip .
+          cd ..
+          ls -lh EcommerenceBackend.zip
 
       - name: Setup SSH
         run: |
@@ -26,37 +32,30 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts || true
 
-      - name: Upload to EC2
+      - name: Upload Zip to EC2
         run: |
           scp -o StrictHostKeyChecking=no EcommerenceBackend.zip ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/EcommerenceBackend.zip
 
       - name: Deploy on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} <<-'EOF'
-            echo "Connected to EC2. Starting backend deployment..."
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            echo "✅ Connected to EC2"
 
-            # Clean old folder and unzip latest
+            # Remove old container/image if exists
+            sudo docker stop ecommercebackend-webapi || true
+            sudo docker rm ecommercebackend-webapi || true
+            sudo docker rmi ecommerencebackend-ecommercebackend-webapi || true
+
+            # Clean old folder and unzip
             rm -rf ~/EcommerenceBackend
             unzip -o ~/EcommerenceBackend.zip -d ~/EcommerenceBackend
 
+            # Move to folder and build
             cd ~/EcommerenceBackend
-
-            # Stop and remove old container
-            if sudo docker ps -a --format '{{.Names}}' | grep -Eq '^ecommercebackend-webapi$'; then
-              sudo docker stop ecommercebackend-webapi
-              sudo docker rm ecommercebackend-webapi
-            fi
-
-            # Remove old image
-            if sudo docker images --format '{{.Repository}}' | grep -Eq '^ecommerencebackend-ecommercebackend-webapi$'; then
-              sudo docker rmi ecommerencebackend-ecommercebackend-webapi
-            fi
-
-            # Build image manually (not docker compose)
             sudo docker build -t ecommerencebackend-ecommercebackend-webapi .
 
-            # Run new container on port 5000:8080
+            # Run container on port 5000 -> 8080
             sudo docker run -d -p 5000:8080 --name ecommercebackend-webapi ecommerencebackend-ecommercebackend-webapi
 
-            echo "Backend deployed and running on port 5000."
+            echo "✅ Backend Deployed Successfully on port 5000"
           EOF
