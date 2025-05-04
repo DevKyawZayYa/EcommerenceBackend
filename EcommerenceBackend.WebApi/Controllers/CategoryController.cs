@@ -31,5 +31,11 @@ namespace EcommerenceBackend.WebApi.Controllers
             var categories = await _mediator.Send(new GetCategoryListQuery());
             return Ok(categories);
         }
+
+        [HttpGet("testing")]
+        public IActionResult Testing()
+        {
+            return Ok("✅ Test endpoint is working.");
+        }
     }
 }

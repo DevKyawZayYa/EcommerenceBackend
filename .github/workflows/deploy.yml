@@ -1,0 +1,62 @@
+name: Deploy Backend to EC2
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy .NET Backend App to EC2
+    runs-on: ubuntu-latest
+    environment: main
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Zip Backend Project (exclude .git)
+        run: |
+          zip -r EcommerenceBackend.zip . -x "*.git*"
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts || true
+
+      - name: Upload to EC2
+        run: |
+          scp -o StrictHostKeyChecking=no EcommerenceBackend.zip ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/EcommerenceBackend.zip
+
+      - name: Deploy on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} <<-'EOF'
+            echo "Connected to EC2. Starting backend deployment..."
+
+            # Clean old folder and unzip latest
+            rm -rf ~/EcommerenceBackend
+            unzip -o ~/EcommerenceBackend.zip -d ~/EcommerenceBackend
+
+            cd ~/EcommerenceBackend
+
+            # Stop and remove old container
+            if sudo docker ps -a --format '{{.Names}}' | grep -Eq '^ecommercebackend-webapi$'; then
+              sudo docker stop ecommercebackend-webapi
+              sudo docker rm ecommercebackend-webapi
+            fi
+
+            # Remove old image
+            if sudo docker images --format '{{.Repository}}' | grep -Eq '^ecommerencebackend-ecommercebackend-webapi$'; then
+              sudo docker rmi ecommerencebackend-ecommercebackend-webapi
+            fi
+
+            # Build image manually (not docker compose)
+            sudo docker build -t ecommerencebackend-ecommercebackend-webapi .
+
+            # Run new container on port 5000:8080
+            sudo docker run -d -p 5000:8080 --name ecommercebackend-webapi ecommerencebackend-ecommercebackend-webapi
+
+            echo "Backend deployed and running on port 5000."
+          EOF
