@@ -32,101 +32,94 @@ jobs:
 
       - name: Deploy on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} <<-'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} <<'EOF'
             echo "✅ Connected to EC2. Starting backend deployment..."
 
-            # Clean old folder and unzip latest
+            # Clean and unzip
             rm -rf ~/EcommerenceBackend
             unzip -o ~/EcommerenceBackend.zip -d ~/EcommerenceBackend
-
             cd ~/EcommerenceBackend
 
-            # Stop and remove old container
-            if sudo docker ps -a --format '{{.Names}}' | grep -Eq '^ecommercebackend-webapi$'; then
-              sudo docker stop ecommercebackend-webapi
-              sudo docker rm ecommercebackend-webapi
-            fi
+            # Stop and remove old containers
+            sudo docker compose down || true
 
-            # Remove old image
+            # Remove old image manually if exists
             if sudo docker images --format '{{.Repository}}' | grep -Eq '^ecommerencebackend-ecommercebackend-webapi$'; then
-              sudo docker rmi ecommerencebackend-ecommercebackend-webapi
+              sudo docker rmi ecommerencebackend-ecommercebackend-webapi || true
             fi
 
             # Create Dockerfile
-            cat <<'DOCKERFILE' > ~/EcommerenceBackend/Dockerfile
-            FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-            WORKDIR /src
-            COPY EcommerenceBackend/EcommerenceBackend.WebApi/*.csproj ./EcommerenceBackend/EcommerenceBackend.WebApi/
-            COPY EcommerenceBackend/EcommerenceBackend.Application.Domain/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Domain/
-            COPY EcommerenceBackend/EcommerenceBackend.Application.Dto/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Dto/
-            COPY EcommerenceBackend/EcommerenceBackend.Infrastructure/*.csproj ./EcommerenceBackend/EcommerenceBackend.Infrastructure/
-            COPY EcommerenceBackend/EcommerenceBackend.Application.UseCases/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.UseCases/
-            COPY EcommerenceBackend/EcommerenceBackend.Application.Interfaces/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Interfaces/
-            COPY EcommerenceBackend/EcommerenceBackend.Application.Interface/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Interface/
-            COPY EcommerenceBackend/EcommerenceBackendUnitTestProj/*.csproj ./EcommerenceBackend/EcommerenceBackendUnitTestProj/
-            RUN dotnet restore "./EcommerenceBackend/EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj"
-            COPY . .
-            RUN dotnet build "./EcommerenceBackend/EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj" -c Release -o /app/build
+            cat <<'DOCKERFILE' > Dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY EcommerenceBackend/EcommerenceBackend.WebApi/*.csproj ./EcommerenceBackend/EcommerenceBackend.WebApi/
+COPY EcommerenceBackend/EcommerenceBackend.Application.Domain/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Domain/
+COPY EcommerenceBackend/EcommerenceBackend.Application.Dto/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Dto/
+COPY EcommerenceBackend/EcommerenceBackend.Infrastructure/*.csproj ./EcommerenceBackend/EcommerenceBackend.Infrastructure/
+COPY EcommerenceBackend/EcommerenceBackend.Application.UseCases/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.UseCases/
+COPY EcommerenceBackend/EcommerenceBackend.Application.Interfaces/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Interfaces/
+COPY EcommerenceBackend/EcommerenceBackend.Application.Interface/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Interface/
+COPY EcommerenceBackend/EcommerenceBackendUnitTestProj/*.csproj ./EcommerenceBackend/EcommerenceBackendUnitTestProj/
+RUN dotnet restore "./EcommerenceBackend/EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj"
+COPY . .
+RUN dotnet build "./EcommerenceBackend/EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj" -c Release -o /app/build
 
-            FROM build AS publish
-            RUN dotnet publish "./EcommerenceBackend/EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj" -c Release -o /app/publish
+FROM build AS publish
+RUN dotnet publish "./EcommerenceBackend/EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj" -c Release -o /app/publish
 
-            FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
-            WORKDIR /app
-            COPY --from=publish /app/publish .
-            ENTRYPOINT ["dotnet", "EcommerenceBackend.WebApi.dll"]
-            DOCKERFILE
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "EcommerenceBackend.WebApi.dll"]
+DOCKERFILE
 
             # Create .dockerignore
-            cat <<'DOCKERIGNORE' > ~/EcommerenceBackend/.dockerignore
-            **/.classpath
-            **/.dockerignore
-            **/.env
-            **/.git
-            **/.gitignore
-            **/.project
-            **/.settings
-            **/.toolstarget
-            **/.vs
-            **/.vscode
-            **/*.*proj.user
-            **/bin
-            **/obj
-            DOCKERIGNORE
+            cat <<'DOCKERIGNORE' > .dockerignore
+**/.classpath
+**/.dockerignore
+**/.env
+**/.git
+**/.gitignore
+**/.project
+**/.settings
+**/.toolstarget
+**/.vs
+**/.vscode
+**/*.*proj.user
+**/bin
+**/obj
+DOCKERIGNORE
 
             # Create docker-compose.yml
             cat <<'COMPOSE' > docker-compose.yml
-            version: "3.8"
+version: "3.8"
 
-            services:
-              ecommercebackend-webapi:
-                container_name: ecommercebackend-webapi
-                build:
-                  context: .
-                  dockerfile: Dockerfile
-                ports:
-                  - "5000:8080"
-                environment:
-                  - ASPNETCORE_ENVIRONMENT=Development
-                  - ConnectionStrings__NorthwindConnection=Server=ecommerence-db.cv4m6i28e0a7.ap-southeast-1.rds.amazonaws.com;Database=ecommerencedb;User=admin;Password=Kzytesting123;
-                  - Redis__ConnectionString=redis:6379
-                depends_on:
-                  - redis
-                restart: unless-stopped
+services:
+  ecommercebackend-webapi:
+    container_name: ecommercebackend-webapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__NorthwindConnection=Server=ecommerence-db.cv4m6i28e0a7.ap-southeast-1.rds.amazonaws.com;Database=ecommerencedb;User=admin;Password=Kzytesting123;
+      - Redis__ConnectionString=redis:6379
+    depends_on:
+      - redis
+    restart: unless-stopped
 
-              redis:
-                image: redis:latest
-                container_name: redis
-                ports:
-                  - "6379:6379"
-                restart: unless-stopped
-            COMPOSE
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+COMPOSE
 
-            # Build image manually (not docker compose)
-            sudo docker build -t ecommerencebackend-ecommercebackend-webapi .
-
-            # Run new container on port 5000:8080
-            sudo docker run -d -p 5000:8080 --name ecommercebackend-webapi ecommerencebackend-ecommercebackend-webapi
+            # Start new container
+            sudo docker compose up -d --build
 
             echo "✅ Backend deployed and running on port 5000."
           EOF
