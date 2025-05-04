@@ -12,17 +12,12 @@ jobs:
     environment: main
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Create Zip Package (include source only)
+      - name: Zip Backend Project (exclude .git)
         run: |
-          mkdir upload
-          cp -r Backend/EcommerenceBackend upload/EcommerenceBackend
-          cd upload
-          zip -r ../EcommerenceBackend.zip .
-          cd ..
-          ls -lh EcommerenceBackend.zip
+          zip -r EcommerenceBackend.zip . -x "*.git*"
 
       - name: Setup SSH
         run: |
@@ -31,23 +26,31 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts || true
 
-      - name: Upload Zip to EC2
+      - name: Upload to EC2
         run: |
           scp -o StrictHostKeyChecking=no EcommerenceBackend.zip ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/EcommerenceBackend.zip
 
       - name: Deploy on EC2
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} <<-'EOF'
-            echo "✅ Connected to EC2"
+            echo "✅ Connected to EC2. Starting backend deployment..."
 
-            # Cleanup old container and image
-            sudo docker stop ecommercebackend-webapi || true
-            sudo docker rm ecommercebackend-webapi || true
-            sudo docker rmi ecommerencebackend-ecommercebackend-webapi || true
-
-            # Clean old folder and unzip
+            # Clean old folder and unzip latest
             rm -rf ~/EcommerenceBackend
             unzip -o ~/EcommerenceBackend.zip -d ~/EcommerenceBackend
+
+            cd ~/EcommerenceBackend
+
+            # Stop and remove old container
+            if sudo docker ps -a --format '{{.Names}}' | grep -Eq '^ecommercebackend-webapi$'; then
+              sudo docker stop ecommercebackend-webapi
+              sudo docker rm ecommercebackend-webapi
+            fi
+
+            # Remove old image
+            if sudo docker images --format '{{.Repository}}' | grep -Eq '^ecommerencebackend-ecommercebackend-webapi$'; then
+              sudo docker rmi ecommerencebackend-ecommercebackend-webapi
+            fi
 
             # Create Dockerfile
             cat <<'DOCKERFILE' > ~/EcommerenceBackend/Dockerfile
@@ -76,25 +79,54 @@ jobs:
 
             # Create .dockerignore
             cat <<'DOCKERIGNORE' > ~/EcommerenceBackend/.dockerignore
-              **/.classpath
-              **/.dockerignore
-              **/.env
-              **/.git
-              **/.gitignore
-              **/.project
-              **/.settings
-              **/.toolstarget
-              **/.vs
-              **/.vscode
-              **/*.*proj.user
-              **/bin
-              **/obj
-              DOCKERIGNORE
+            **/.classpath
+            **/.dockerignore
+            **/.env
+            **/.git
+            **/.gitignore
+            **/.project
+            **/.settings
+            **/.toolstarget
+            **/.vs
+            **/.vscode
+            **/*.*proj.user
+            **/bin
+            **/obj
+            DOCKERIGNORE
 
-            # Build and run Docker container
-            cd ~/EcommerenceBackend
+            # Create docker-compose.yml
+            cat <<'COMPOSE' > docker-compose.yml
+            version: "3.8"
+
+            services:
+              ecommercebackend-webapi:
+                container_name: ecommercebackend-webapi
+                build:
+                  context: .
+                  dockerfile: Dockerfile
+                ports:
+                  - "5000:8080"
+                environment:
+                  - ASPNETCORE_ENVIRONMENT=Development
+                  - ConnectionStrings__NorthwindConnection=Server=ecommerence-db.cv4m6i28e0a7.ap-southeast-1.rds.amazonaws.com;Database=ecommerencedb;User=admin;Password=Kzytesting123;
+                  - Redis__ConnectionString=redis:6379
+                depends_on:
+                  - redis
+                restart: unless-stopped
+
+              redis:
+                image: redis:latest
+                container_name: redis
+                ports:
+                  - "6379:6379"
+                restart: unless-stopped
+            COMPOSE
+
+            # Build image manually (not docker compose)
             sudo docker build -t ecommerencebackend-ecommercebackend-webapi .
+
+            # Run new container on port 5000:8080
             sudo docker run -d -p 5000:8080 --name ecommercebackend-webapi ecommerencebackend-ecommercebackend-webapi
 
-            echo "✅ Backend deployed and running on port 5000"
+            echo "✅ Backend deployed and running on port 5000."
           EOF
