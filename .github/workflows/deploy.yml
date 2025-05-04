@@ -50,73 +50,73 @@ jobs:
 
             # Create Dockerfile
             cat <<'DOCKERFILE' > Dockerfile
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-COPY EcommerenceBackend/EcommerenceBackend.WebApi/*.csproj ./EcommerenceBackend/EcommerenceBackend.WebApi/
-COPY EcommerenceBackend/EcommerenceBackend.Application.Domain/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Domain/
-COPY EcommerenceBackend/EcommerenceBackend.Application.Dto/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Dto/
-COPY EcommerenceBackend/EcommerenceBackend.Infrastructure/*.csproj ./EcommerenceBackend/EcommerenceBackend.Infrastructure/
-COPY EcommerenceBackend/EcommerenceBackend.Application.UseCases/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.UseCases/
-COPY EcommerenceBackend/EcommerenceBackend.Application.Interfaces/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Interfaces/
-COPY EcommerenceBackend/EcommerenceBackend.Application.Interface/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Interface/
-COPY EcommerenceBackend/EcommerenceBackendUnitTestProj/*.csproj ./EcommerenceBackend/EcommerenceBackendUnitTestProj/
-RUN dotnet restore "./EcommerenceBackend/EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj"
-COPY . .
-RUN dotnet build "./EcommerenceBackend/EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj" -c Release -o /app/build
+              FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+              WORKDIR /src
+              COPY EcommerenceBackend/EcommerenceBackend.WebApi/*.csproj ./EcommerenceBackend/EcommerenceBackend.WebApi/
+              COPY EcommerenceBackend/EcommerenceBackend.Application.Domain/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Domain/
+              COPY EcommerenceBackend/EcommerenceBackend.Application.Dto/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Dto/
+              COPY EcommerenceBackend/EcommerenceBackend.Infrastructure/*.csproj ./EcommerenceBackend/EcommerenceBackend.Infrastructure/
+              COPY EcommerenceBackend/EcommerenceBackend.Application.UseCases/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.UseCases/
+              COPY EcommerenceBackend/EcommerenceBackend.Application.Interfaces/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Interfaces/
+              COPY EcommerenceBackend/EcommerenceBackend.Application.Interface/*.csproj ./EcommerenceBackend/EcommerenceBackend.Application.Interface/
+              COPY EcommerenceBackend/EcommerenceBackendUnitTestProj/*.csproj ./EcommerenceBackend/EcommerenceBackendUnitTestProj/
+              RUN dotnet restore "./EcommerenceBackend/EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj"
+              COPY . .
+              RUN dotnet build "./EcommerenceBackend/EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj" -c Release -o /app/build
 
-FROM build AS publish
-RUN dotnet publish "./EcommerenceBackend/EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj" -c Release -o /app/publish
+              FROM build AS publish
+              RUN dotnet publish "./EcommerenceBackend/EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj" -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "EcommerenceBackend.WebApi.dll"]
-DOCKERFILE
+              FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+              WORKDIR /app
+              COPY --from=publish /app/publish .
+              ENTRYPOINT ["dotnet", "EcommerenceBackend.WebApi.dll"]
+              DOCKERFILE
 
             # Create .dockerignore
             cat <<'DOCKERIGNORE' > .dockerignore
-**/.classpath
-**/.dockerignore
-**/.env
-**/.git
-**/.gitignore
-**/.project
-**/.settings
-**/.toolstarget
-**/.vs
-**/.vscode
-**/*.*proj.user
-**/bin
-**/obj
-DOCKERIGNORE
+              **/.classpath
+              **/.dockerignore
+              **/.env
+              **/.git
+              **/.gitignore
+              **/.project
+              **/.settings
+              **/.toolstarget
+              **/.vs
+              **/.vscode
+              **/*.*proj.user
+              **/bin
+              **/obj
+              DOCKERIGNORE
 
             # Create docker-compose.yml
             cat <<'COMPOSE' > docker-compose.yml
-version: "3.8"
+              version: "3.8"
 
-services:
-  ecommercebackend-webapi:
-    container_name: ecommercebackend-webapi
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "5000:8080"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__NorthwindConnection=Server=ecommerence-db.cv4m6i28e0a7.ap-southeast-1.rds.amazonaws.com;Database=ecommerencedb;User=admin;Password=Kzytesting123;
-      - Redis__ConnectionString=redis:6379
-    depends_on:
-      - redis
-    restart: unless-stopped
+              services:
+                ecommercebackend-webapi:
+                  container_name: ecommercebackend-webapi
+                  build:
+                    context: .
+                    dockerfile: Dockerfile
+                  ports:
+                    - "5000:8080"
+                  environment:
+                    - ASPNETCORE_ENVIRONMENT=Development
+                    - ConnectionStrings__NorthwindConnection=Server=ecommerence-db.cv4m6i28e0a7.ap-southeast-1.rds.amazonaws.com;Database=ecommerencedb;User=admin;Password=Kzytesting123;
+                    - Redis__ConnectionString=redis:6379
+                  depends_on:
+                    - redis
+                  restart: unless-stopped
 
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - "6379:6379"
-    restart: unless-stopped
-COMPOSE
+                redis:
+                  image: redis:latest
+                  container_name: redis
+                  ports:
+                    - "6379:6379"
+                  restart: unless-stopped
+              COMPOSE
 
             # Start new container
             sudo docker compose up -d --build
