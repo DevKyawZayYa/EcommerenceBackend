@@ -8,8 +8,11 @@ namespace EcommerenceBackend.Application.Dto.Stripe.Response
 {
     public class CreateStripeCheckoutResponse
     {
-        public string SessionId { get; set; }
-        public string Url { get; set; }
+        public string SessionId { get; set; } = string.Empty;
+        public string Url { get; set; } = string.Empty;
+        public long AmountTotal { get; set; }
+        public string Currency { get; set; } = string.Empty;
     }
+
 
 }

@@ -19,7 +19,15 @@ namespace EcommerenceBackend.Application.Domain.Orders
         {
         }
 
-        public Order(CustomerId customerId, IEnumerable<OrderItem> items, decimal taxAmount, decimal shippingCost, decimal discountAmount, string status, string paymentStatus, string deliveryStatus)
+        public Order(CustomerId customerId, 
+            IEnumerable<OrderItem> items, 
+            decimal taxAmount, 
+            decimal shippingCost, 
+            decimal discountAmount, 
+            string status, 
+            string paymentStatus, 
+            string deliveryStatus,
+            string stripeSessionId)
         {
             Id = OrderId.Create(Guid.NewGuid());
             CustomerId = customerId;
@@ -32,6 +40,7 @@ namespace EcommerenceBackend.Application.Domain.Orders
             DeliveryStatus = deliveryStatus;
             TotalAmount = _orderItems.Sum(item => item.Price.Amount * item.Quantity.Amount);
             GrandTotal = TotalAmount + TaxAmount + ShippingCost - DiscountAmount;
+            StripeSessionId = stripeSessionId;
         }
 
         public OrderId Id { get; private set; }

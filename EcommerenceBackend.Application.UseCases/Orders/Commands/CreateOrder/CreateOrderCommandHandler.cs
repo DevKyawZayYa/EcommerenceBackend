@@ -46,7 +46,8 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder
                     request.DiscountAmount,
                     request.Status ?? "Pending",
                     request.PaymentStatus ?? "Unpaid",
-                    request.DeliveryStatus ?? "Processing"
+                    request.DeliveryStatus ?? "Processing",
+                    request.StripeSessionId ?? string.Empty
                 );
 
                 await _dbContext.Orders.AddAsync(order, cancellationToken);

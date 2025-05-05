@@ -31,10 +31,10 @@ namespace EcommerenceBackend.Infrastructure.Services
                     },
                     Quantity = item.Quantity
                 }).ToList(),
+
                 Mode = "payment",
                 SuccessUrl = "https://nshoppe.shop/payment-success?session_id={CHECKOUT_SESSION_ID}",
                 CancelUrl = "https://nshoppe.shop/payment-cancel"
-
             };
 
             var service = new SessionService();
@@ -43,7 +43,9 @@ namespace EcommerenceBackend.Infrastructure.Services
             return new CreateStripeCheckoutResponse
             {
                 SessionId = session.Id,
-                Url = session.Url
+                Url = session.Url,
+                AmountTotal = session.AmountTotal ?? 0,
+                Currency = session.Currency
             };
         }
 

@@ -19,6 +19,8 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder
         public string Status { get; set; } = "Pending";
         public string PaymentStatus { get; set; } = "Unpaid";
         public string DeliveryStatus { get; set; } = "Processing";
+        public string? StripeSessionId { get; set; } 
+
     }
 
 }
