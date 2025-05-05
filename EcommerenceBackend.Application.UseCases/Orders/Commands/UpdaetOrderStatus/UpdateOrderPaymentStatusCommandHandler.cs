@@ -19,16 +19,16 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.UpdateOrderPay
                 .FirstOrDefaultAsync(o => o.StripeSessionId == request.StripeSessionId, cancellationToken);
 
             if (order is null)
-                throw new Exception("❌ Order not found for the provided Stripe session ID.");
+                throw new Exception(" Order not found for the provided Stripe session ID.");
 
             switch (request.NewStatus)
             {
                 case "Paid":
-                    order.MarkAsPaid(); // ✅ You already have this method
+                    order.MarkAsPaid(); // You already have this method
                     break;
 
                 case "Failed":
-                    order.MarkAsFailed(); // ⬅️ You’ll create this next
+                    order.MarkAsFailed(); // You’ll create this next
                     break;
 
                 default:

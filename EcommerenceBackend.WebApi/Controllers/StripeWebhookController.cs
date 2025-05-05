@@ -47,7 +47,7 @@ public class StripeWebhookController : ControllerBase
         {
             case "checkout.session.completed":
                 var session = stripeEvent.Data.Object as Session;
-                _logger.LogInformation($"✅ Checkout session completed: {session?.Id}");
+                _logger.LogInformation($"Checkout session completed: {session?.Id}");
 
                 if (session != null)
                 {
@@ -61,7 +61,7 @@ public class StripeWebhookController : ControllerBase
 
             case "payment_intent.payment_failed":
                 var failedIntent = stripeEvent.Data.Object as PaymentIntent;
-                _logger.LogWarning($"❌ Payment failed: {failedIntent?.Id}");
+                _logger.LogWarning($"Payment failed: {failedIntent?.Id}");
 
                 if (failedIntent?.Metadata != null && failedIntent.Metadata.ContainsKey("orderId"))
                 {
@@ -98,7 +98,6 @@ public class StripeWebhookController : ControllerBase
             order.OrderDate
         });
     }
-
 }
 
 
