@@ -3,6 +3,8 @@ using EcommerenceBackend.Application.UseCases.Orders.Commands.UpdateOrderPayment
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using Stripe.Checkout;
+using Microsoft.EntityFrameworkCore;
+using EcommerenceBackend.Infrastructure.Contexts;
 
 [ApiController]
 [Route("api/webhooks/stripe")]
@@ -11,12 +13,14 @@ public class StripeWebhookController : ControllerBase
     private readonly ILogger<StripeWebhookController> _logger;
     private readonly string _webhookSecret;
     private readonly IMediator _mediator;
+    private readonly OrderDbContext _dbContext;
 
-    public StripeWebhookController(IConfiguration configuration, ILogger<StripeWebhookController> logger, IMediator mediator)
+    public StripeWebhookController(IConfiguration configuration, ILogger<StripeWebhookController> logger, IMediator mediator, OrderDbContext dbContext)
     {
         _webhookSecret = configuration["Stripe:WebhookSecret"];
         _logger = logger;
         _mediator = mediator;
+        _dbContext = dbContext;
     }
 
     [HttpPost]
@@ -59,6 +63,22 @@ public class StripeWebhookController : ControllerBase
         }
         return Ok();
     }
+
+    [HttpGet("by-session/{sessionId}")]
+    public async Task<IActionResult> GetBySession(string sessionId)
+    {
+        var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.StripeSessionId == sessionId);
+        if (order == null) return NotFound();
+
+        return Ok(new
+        {
+            order.Id,
+            order.PaymentStatus,
+            order.DeliveryStatus,
+            order.OrderDate
+        });
+    }
+
 }
 
 
