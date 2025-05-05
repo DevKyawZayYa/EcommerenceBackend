@@ -32,7 +32,7 @@ namespace EcommerenceBackend.Infrastructure.Services
                     Quantity = item.Quantity
                 }).ToList(),
                 Mode = "payment",
-                SuccessUrl = "https://nshoppe.shop/payment-success",
+                SuccessUrl = "https://nshoppe.shop/payment-success?session_id={CHECKOUT_SESSION_ID}",
                 CancelUrl = "https://nshoppe.shop/payment-cancel"
 
             };
