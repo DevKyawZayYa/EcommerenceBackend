@@ -32,8 +32,8 @@ namespace EcommerenceBackend.Infrastructure.Services
                     Quantity = item.Quantity
                 }).ToList(),
                 Mode = "payment",
-                SuccessUrl = "http://localhost:4200/payment-success",
-                CancelUrl = "http://localhost:4200/payment-cancel"
+                SuccessUrl = "https://nshoppe.shop/payment-success",
+                CancelUrl = "https://nshoppe.shop/payment-cancel"
 
             };
 

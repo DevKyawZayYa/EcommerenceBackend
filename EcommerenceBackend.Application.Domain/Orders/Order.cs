@@ -46,6 +46,13 @@ namespace EcommerenceBackend.Application.Domain.Orders
         public string Status { get; private set; }
         public string PaymentStatus { get; private set; }
         public string DeliveryStatus { get; private set; }
+        public string? StripeSessionId { get; private set; }
+
+        public void MarkAsPaid()
+        {
+            PaymentStatus = "Paid";
+        }
+
 
         public void UpdateOrderItems(IEnumerable<OrderItem> updatedItems)
         {
