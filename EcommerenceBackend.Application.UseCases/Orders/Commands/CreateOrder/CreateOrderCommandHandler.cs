@@ -26,30 +26,39 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder
 
         public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            var orderItems = request.Items.Select(dto =>
-                new OrderItem(
-                    OrderItemId.Create(Guid.NewGuid()),
-                    null, // OrderId null now
-                    new ProductId(dto.ProductId),
-                    new Money(dto.Price),
-                    new Money(dto.Quantity) 
-                )
-            ).ToList();
+            try
+            {
+                var orderItems = request.Items.Select(dto =>
+                      new OrderItem(
+                          OrderItemId.Create(Guid.NewGuid()),
+                          null, // OrderId null now
+                          new ProductId(dto.ProductId),
+                          new Money(dto.Price),
+                          new Money(dto.Quantity)
+                      )
+                  ).ToList();
 
-            var order = new Order(
-                request.CustomerId!,
-                orderItems,
-                request.TaxAmount,
-                request.ShippingCost,
-                request.DiscountAmount,
-                request.Status ?? "Pending",
-                request.PaymentStatus ?? "Unpaid",
-                request.DeliveryStatus ?? "Processing"
-            );
+                var order = new Order(
+                    request.CustomerId!,
+                    orderItems,
+                    request.TaxAmount,
+                    request.ShippingCost,
+                    request.DiscountAmount,
+                    request.Status ?? "Pending",
+                    request.PaymentStatus ?? "Unpaid",
+                    request.DeliveryStatus ?? "Processing"
+                );
 
-            await _dbContext.Orders.AddAsync(order, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken); 
-            return order.Id.Value;
+                await _dbContext.Orders.AddAsync(order, cancellationToken);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                return order.Id.Value;
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (e.g., log it)
+                throw;
+            }
+     
         }
 
     }

@@ -19,12 +19,25 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.UpdateOrderPay
                 .FirstOrDefaultAsync(o => o.StripeSessionId == request.StripeSessionId, cancellationToken);
 
             if (order is null)
-                throw new Exception("Order not found for this Stripe session");
+                throw new Exception("❌ Order not found for the provided Stripe session ID.");
 
-            order.MarkAsPaid(); // This should change PaymentStatus = "Paid"
+            switch (request.NewStatus)
+            {
+                case "Paid":
+                    order.MarkAsPaid(); // ✅ You already have this method
+                    break;
+
+                case "Failed":
+                    order.MarkAsFailed(); // ⬅️ You’ll create this next
+                    break;
+
+                default:
+                    throw new Exception($"Unsupported payment status: {request.NewStatus}");
+            }
+
             await _dbContext.SaveChangesAsync(cancellationToken);
-
             return Unit.Value;
         }
+
     }
 }

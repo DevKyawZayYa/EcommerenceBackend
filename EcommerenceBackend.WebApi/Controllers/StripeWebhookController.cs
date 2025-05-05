@@ -43,26 +43,46 @@ public class StripeWebhookController : ControllerBase
             return BadRequest();
         }
 
-        if (stripeEvent.Type == "checkout.session.completed")
+        switch (stripeEvent.Type)
         {
-            var session = stripeEvent.Data.Object as Session;
-            _logger.LogInformation($"Stripe Checkout Session completed: {session?.Id}");
+            case "checkout.session.completed":
+                var session = stripeEvent.Data.Object as Session;
+                _logger.LogInformation($"✅ Checkout session completed: {session?.Id}");
 
-            if (session != null)
-            {
-                await _mediator.Send(new UpdateOrderPaymentStatusCommand
+                if (session != null)
                 {
-                    StripeSessionId = session.Id,
-                    NewStatus = "Paid"
-                });
-            }
+                    await _mediator.Send(new UpdateOrderPaymentStatusCommand
+                    {
+                        StripeSessionId = session.Id,
+                        NewStatus = "Paid"
+                    });
+                }
+                break;
+
+            case "payment_intent.payment_failed":
+                var failedIntent = stripeEvent.Data.Object as PaymentIntent;
+                _logger.LogWarning($"❌ Payment failed: {failedIntent?.Id}");
+
+                if (failedIntent?.Metadata != null && failedIntent.Metadata.ContainsKey("orderId"))
+                {
+                    string? sessionId = failedIntent.Metadata["session_id"];
+
+                    await _mediator.Send(new UpdateOrderPaymentStatusCommand
+                    {
+                        StripeSessionId = sessionId!,
+                        NewStatus = "Failed"
+                    });
+                }
+                break;
+
+            default:
+                _logger.LogInformation($"Unhandled event type: {stripeEvent.Type}");
+                break;
         }
-        else
-        {
-            _logger.LogInformation($"Unhandled event type: {stripeEvent.Type}");
-        }
+
         return Ok();
     }
+
 
     [HttpGet("by-session/{sessionId}")]
     public async Task<IActionResult> GetBySession(string sessionId)

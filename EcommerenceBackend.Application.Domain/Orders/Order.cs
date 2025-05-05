@@ -53,6 +53,17 @@ namespace EcommerenceBackend.Application.Domain.Orders
             PaymentStatus = "Paid";
         }
 
+        public void MarkAsFailed()
+        {
+            PaymentStatus = "Failed";
+        }
+
+
+        public void SetStripeSessionId(string sessionId)
+        {
+            StripeSessionId = sessionId;
+        }
+
 
         public void UpdateOrderItems(IEnumerable<OrderItem> updatedItems)
         {
