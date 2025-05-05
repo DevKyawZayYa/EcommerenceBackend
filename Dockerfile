@@ -28,5 +28,6 @@ RUN dotnet publish "./EcommerenceBackend.WebApi/EcommerenceBackend.WebApi.csproj
 # Stage 3: Final image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
+ENV ASPNETCORE_ENVIRONMENT=Production
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "EcommerenceBackend.WebApi.dll"]
