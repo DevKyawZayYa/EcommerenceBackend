@@ -1,4 +1,5 @@
-﻿using EcommerenceBackend.Application.Dto.Orders.Response;
+﻿using EcommerenceBackend.Application.Domain.Customers;
+using EcommerenceBackend.Application.Dto.Orders.Response;
 using EcommerenceBackend.Application.Dto.ShoppingCart.Response;
 using EcommerenceBackend.Application.Interfaces.Interfaces;
 using EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder;
@@ -19,11 +20,14 @@ namespace EcommerenceBackend.WebApi.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IStripeService _stripeService;
+        private readonly ICurrentUserService _currentUserService;
 
-        public PaymentController(IMediator mediator, IStripeService stripeService)
+
+        public PaymentController(IMediator mediator, IStripeService stripeService, ICurrentUserService currentUserService)
         {
             _mediator = mediator;
             _stripeService = stripeService;
+            _currentUserService = currentUserService;
         }
 
         [HttpPost]
@@ -47,10 +51,11 @@ namespace EcommerenceBackend.WebApi.Controllers
             decimal tax = 0;
             decimal shipping = 0;
             decimal discount = 0;
+            var userId = _currentUserService.UserId;
 
             var orderCommand = new CreateOrderCommand
             {
-                CustomerId = null, // or extract from user context
+                CustomerId = CustomerId.Create(Guid.Parse(userId!)), 
                 Items = items.Select(x => new OrderItemDto
                 {
                     ProductId = x.ProductId,
