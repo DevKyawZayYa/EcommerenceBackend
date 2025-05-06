@@ -16,7 +16,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.UpdateOrderPay
         public async Task<Unit> Handle(UpdateOrderPaymentStatusCommand request, CancellationToken cancellationToken)
         {
             var order = await _dbContext.Orders
-                .FirstOrDefaultAsync(o => o.StripeSessionId == request.StripeSessionId, cancellationToken);
+                .FirstOrDefaultAsync(o => o.Id.Value == request.OrderId, cancellationToken);
 
             if (order is null)
                 throw new Exception(" Order not found for the provided Stripe session ID.");

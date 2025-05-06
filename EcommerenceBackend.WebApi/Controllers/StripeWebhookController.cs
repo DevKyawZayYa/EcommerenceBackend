@@ -39,7 +39,7 @@ public class StripeWebhookController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Stripe Webhook signature error: {ex.Message}");
+            _logger.LogError("Stripe Webhook signature error: " + ex.ToString());
             return BadRequest();
         }
 
@@ -49,29 +49,48 @@ public class StripeWebhookController : ControllerBase
                 var session = stripeEvent.Data.Object as Session;
                 _logger.LogInformation($"Checkout session completed: {session?.Id}");
 
-                if (session != null)
+                if (session?.Metadata != null && session.Metadata.ContainsKey("orderId"))
                 {
-                    await _mediator.Send(new UpdateOrderPaymentStatusCommand
+                    if (Guid.TryParse(session.Metadata["orderId"], out var orderId))
                     {
-                        StripeSessionId = session.Id,
-                        NewStatus = "Paid"
-                    });
+                        var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.Id.Value == orderId);
+                        if (order != null)
+                        {
+                            order.SetStripeSessionId(session.Id);
+                            await _dbContext.SaveChangesAsync();
+
+                            await _mediator.Send(new UpdateOrderPaymentStatusCommand
+                            {
+                                OrderId = orderId,
+                                NewStatus = "Paid"
+                            });
+                        }
+                        else
+                        {
+                            _logger.LogWarning("Order not found for metadata orderId");
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Invalid orderId format in metadata");
+                    }
                 }
                 break;
 
             case "payment_intent.payment_failed":
                 var failedIntent = stripeEvent.Data.Object as PaymentIntent;
-                _logger.LogWarning($"Payment failed: {failedIntent?.Id}");
+                _logger.LogWarning($"❌ Payment failed: {failedIntent?.Id}");
 
                 if (failedIntent?.Metadata != null && failedIntent.Metadata.ContainsKey("orderId"))
                 {
-                    string? sessionId = failedIntent.Metadata["session_id"];
-
-                    await _mediator.Send(new UpdateOrderPaymentStatusCommand
+                    if (Guid.TryParse(failedIntent.Metadata["orderId"], out var orderId))
                     {
-                        StripeSessionId = sessionId!,
-                        NewStatus = "Failed"
-                    });
+                        await _mediator.Send(new UpdateOrderPaymentStatusCommand
+                        {
+                            OrderId = orderId,
+                            NewStatus = "Failed"
+                        });
+                    }
                 }
                 break;
 
@@ -82,7 +101,6 @@ public class StripeWebhookController : ControllerBase
 
         return Ok();
     }
-
 
     [HttpGet("by-session/{sessionId}")]
     public async Task<IActionResult> GetBySession(string sessionId)
@@ -99,10 +117,3 @@ public class StripeWebhookController : ControllerBase
         });
     }
 }
-
-
-
-
-
-
-

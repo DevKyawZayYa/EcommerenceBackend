@@ -1,4 +1,5 @@
-﻿using EcommerenceBackend.Application.Dto.ShoppingCart.Response;
+﻿using EcommerenceBackend.Application.Domain.Customers;
+using EcommerenceBackend.Application.Dto.ShoppingCart.Response;
 using EcommerenceBackend.Application.Dto.Stripe.Response;
 using MediatR;
 using System;
@@ -11,6 +12,7 @@ namespace EcommerenceBackend.Application.UseCases.Stripe.Commands
 {
     public class CreateStripeCheckoutCommand : IRequest<CreateStripeCheckoutResponse>
     {
+        public Guid OrderId { get; set; }
         public List<CheckoutItemDto> Items { get; set; } = new();
     }
 }

@@ -1,5 +1,7 @@
-﻿using EcommerenceBackend.Application.Dto.Stripe.Response;
+﻿using EcommerenceBackend.Application.Dto.ShoppingCart.Response;
+using EcommerenceBackend.Application.Dto.Stripe.Response;
 using EcommerenceBackend.Application.Interfaces.Interfaces;
+using EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -20,7 +22,7 @@ namespace EcommerenceBackend.Application.UseCases.Stripe.Commands
 
         public async Task<CreateStripeCheckoutResponse> Handle(CreateStripeCheckoutCommand request, CancellationToken cancellationToken)
         {
-            return await _stripeService.CreateCheckoutSessionAsync(request.Items);
+            return await _stripeService.CreateCheckoutSessionAsync(request.Items, request.OrderId);
         }
     }
 

@@ -4,7 +4,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.UpdateOrderPay
 {
     public class UpdateOrderPaymentStatusCommand : IRequest<Unit>
     {
-        public string StripeSessionId { get; set; } = default!;
+        public Guid OrderId { get; set; } = default!;
         public string NewStatus { get; set; } = "Paid";
     }
 }

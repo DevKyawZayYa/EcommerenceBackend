@@ -7,13 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Stripe.Checkout;
 using EcommerenceBackend.Application.Interfaces.Interfaces;
+using EcommerenceBackend.Infrastructure.Contexts;
 
 
 namespace EcommerenceBackend.Infrastructure.Services
 {
     public class StripeService : IStripeService
     {
-        public async Task<CreateStripeCheckoutResponse> CreateCheckoutSessionAsync(List<CheckoutItemDto> items)
+        public async Task<CreateStripeCheckoutResponse> CreateCheckoutSessionAsync(List<CheckoutItemDto> items, Guid orderId)
         {
             var options = new SessionCreateOptions
             {
@@ -31,10 +32,13 @@ namespace EcommerenceBackend.Infrastructure.Services
                     },
                     Quantity = item.Quantity
                 }).ToList(),
-
                 Mode = "payment",
                 SuccessUrl = "https://nshoppe.shop/payment-success?session_id={CHECKOUT_SESSION_ID}",
-                CancelUrl = "https://nshoppe.shop/payment-cancel"
+                CancelUrl = "https://nshoppe.shop/payment-cancel",
+                Metadata = new Dictionary<string, string>
+        {
+            { "orderId", orderId.ToString() }
+        }
             };
 
             var service = new SessionService();
@@ -48,7 +52,6 @@ namespace EcommerenceBackend.Infrastructure.Services
                 Currency = session.Currency
             };
         }
-
         public Task<CreateStripeCheckoutResponse> CreateCheckoutSessionAsync(List<ShoppingCartDto> items)
         {
             throw new NotImplementedException();

@@ -10,7 +10,9 @@ namespace EcommerenceBackend.Application.Interfaces.Interfaces
 {
     public interface IStripeService
     {
-        Task<CreateStripeCheckoutResponse> CreateCheckoutSessionAsync(List<CheckoutItemDto> items);
+
+        Task<CreateStripeCheckoutResponse> CreateCheckoutSessionAsync(List<CheckoutItemDto> items, Guid orderId);
+
     }
 
 }
