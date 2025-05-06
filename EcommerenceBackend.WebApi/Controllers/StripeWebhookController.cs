@@ -5,6 +5,7 @@ using Stripe;
 using Stripe.Checkout;
 using Microsoft.EntityFrameworkCore;
 using EcommerenceBackend.Infrastructure.Contexts;
+using EcommerenceBackend.Application.Domain.Orders.EcommerenceBackend.Application.Domain.Orders;
 
 [ApiController]
 [Route("api/webhooks/stripe")]
@@ -53,7 +54,7 @@ public class StripeWebhookController : ControllerBase
                 {
                     if (Guid.TryParse(session.Metadata["orderId"], out var orderId))
                     {
-                        var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.Id.Value == orderId);
+                        var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.Id.Value! == Guid.Parse("eb5df487-1dd3-4010-a6b0-bb01fabd1325"));
                         if (order != null)
                         {
                             order.SetStripeSessionId(session.Id);
