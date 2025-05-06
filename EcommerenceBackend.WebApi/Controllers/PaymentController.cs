@@ -1,4 +1,8 @@
-﻿using EcommerenceBackend.Application.UseCases.Payments.Commands.CreatePayment;
+﻿using EcommerenceBackend.Application.Dto.Orders.Response;
+using EcommerenceBackend.Application.Dto.ShoppingCart.Response;
+using EcommerenceBackend.Application.Interfaces.Interfaces;
+using EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder;
+using EcommerenceBackend.Application.UseCases.Payments.Commands.CreatePayment;
 using EcommerenceBackend.Application.UseCases.Payments.Queries.GetInvoiceDetailsByOrderIdQuery;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -14,10 +18,12 @@ namespace EcommerenceBackend.WebApi.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IStripeService _stripeService;
 
-        public PaymentController(IMediator mediator)
+        public PaymentController(IMediator mediator, IStripeService stripeService)
         {
             _mediator = mediator;
+            _stripeService = stripeService;
         }
 
         [HttpPost]
@@ -34,5 +40,40 @@ namespace EcommerenceBackend.WebApi.Controllers
             if (payments == null || payments.Count == 0) return NotFound();
             return Ok(payments);
         }
+
+        [HttpPost("checkout")]
+        public async Task<IActionResult> CreateStripeCheckout([FromBody] List<CheckoutItemDto> items)
+        {
+            decimal tax = 0;
+            decimal shipping = 0;
+            decimal discount = 0;
+
+            var orderCommand = new CreateOrderCommand
+            {
+                CustomerId = null, // or extract from user context
+                Items = items.Select(x => new OrderItemDto
+                {
+                    ProductId = x.ProductId,
+                    ProductName = x.ProductName,
+                    Price = x.Price,
+                    Quantity = x.Quantity
+
+                }).ToList(),
+                TaxAmount = tax,
+                ShippingCost = shipping,
+                DiscountAmount = discount,
+            };
+
+            var orderId = await _mediator.Send(orderCommand);
+
+            var session = await _stripeService.CreateCheckoutSessionAsync(items, orderId);
+
+            return Ok(new
+            {
+                sessionUrl = session.Url,
+                sessionId = session.SessionId
+            });
+        }
+
     }
 }

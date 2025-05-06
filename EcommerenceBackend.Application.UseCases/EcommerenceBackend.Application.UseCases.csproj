@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="ShoppingCart\Commands\UpdateCartItem\" />
+    <Folder Include="Stripe\" />
   </ItemGroup>
 
   <ItemGroup>
