@@ -10,6 +10,6 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.DeleteOrder
 {
     public class DeleteOrderCommand : IRequest<bool>
     {
-        public OrderId? OrderId { get; set; }
+        public Guid? OrderId { get; set; }
     }
 }

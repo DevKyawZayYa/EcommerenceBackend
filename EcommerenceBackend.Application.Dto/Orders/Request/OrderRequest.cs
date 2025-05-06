@@ -10,7 +10,7 @@ namespace EcommerenceBackend.Application.Dto.Orders.Request
 {
     public class OrderRequest
     {
-        public OrderId? OrderId { get; set; }
+        public Guid? OrderId { get; set; }
         public CustomerId? CustomerId { get; set; }
     }
 }

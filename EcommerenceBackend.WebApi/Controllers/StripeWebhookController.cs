@@ -52,9 +52,9 @@ public class StripeWebhookController : ControllerBase
 
                 if (session?.Metadata != null && session.Metadata.ContainsKey("orderId"))
                 {
-                    if (Guid.TryParse(session.Metadata["orderId"], out var orderId))
+                    if (System.Guid.TryParse(session.Metadata["orderId"], out var orderId))
                     {
-                        var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.Id.Value! == Guid.Parse("eb5df487-1dd3-4010-a6b0-bb01fabd1325"));
+                        var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
                         if (order != null)
                         {
                             order.SetStripeSessionId(session.Id);
@@ -84,7 +84,7 @@ public class StripeWebhookController : ControllerBase
 
                 if (failedIntent?.Metadata != null && failedIntent.Metadata.ContainsKey("orderId"))
                 {
-                    if (Guid.TryParse(failedIntent.Metadata["orderId"], out var orderId))
+                    if (System.Guid.TryParse(failedIntent.Metadata["orderId"], out var orderId))
                     {
                         await _mediator.Send(new UpdateOrderPaymentStatusCommand
                         {

@@ -140,7 +140,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                     b.Property<Guid>("ShoppingCartId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("OrderId")
+                    b.Property<Guid>("Guid")
                         .HasColumnType("char(36)");
 
                     b.Property<Guid>("ProductId")
@@ -148,7 +148,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
 
                     b.HasKey("ShoppingCartId");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("Guid");
 
                     b.HasIndex("ProductId");
 
@@ -195,7 +195,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
                 {
                     b.HasOne("EcommerenceBackend.Application.Domain.Orders.Order", null)
                         .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
+                        .HasForeignKey("Guid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

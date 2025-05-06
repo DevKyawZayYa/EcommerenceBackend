@@ -11,7 +11,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.UpdateOrder
 {
     public class UpdateOrderCommand : IRequest<bool>
     {
-        public OrderId? OrderId { get; set; }
+        public Guid? OrderId { get; set; }
         public List<OrderItemDto> UpdatedItems { get; set; } = new List<OrderItemDto>();
         public decimal TotalAmount { get; set; }
     }

@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 public class OrderItem
 {
     public OrderItemId Id { get; private set; }
-    public OrderId OrderId { get; private set; }
+    public Guid? OrderId { get; private set; }
     public ProductId ProductId { get; private set; }
     public Money Price { get; private set; }
     public Money Quantity { get; private set; }
@@ -16,7 +16,7 @@ public class OrderItem
     private OrderItem() { }
 
     // Constructor with parameters for business logic
-    public OrderItem(OrderItemId id, OrderId orderId, ProductId productId, Money price, Money quantity)
+    public OrderItem(OrderItemId id, Guid? orderId, ProductId productId, Money price, Money quantity)
     {
         Id = id;
         OrderId = orderId;

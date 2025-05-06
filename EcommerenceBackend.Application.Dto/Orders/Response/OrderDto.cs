@@ -10,7 +10,7 @@ namespace EcommerenceBackend.Application.Dto.Orders.Response
 {
     public class OrderDto
     {
-        public OrderId Id { get; set; }
+        public Guid? Id { get; set; }
         public CustomerId CustomerId { get; set; }
         public DateTime OrderDate { get; set; }
         public decimal TotalAmount { get; set; }

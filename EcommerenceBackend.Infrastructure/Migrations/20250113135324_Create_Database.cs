@@ -145,7 +145,7 @@ namespace EcommerenceBackend.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_orderItems_OrderId",
                 table: "OrderItems",
-                column: "OrderId");
+                column: "Guid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_orderItems_ProductId",

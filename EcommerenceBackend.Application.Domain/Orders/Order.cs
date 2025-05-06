@@ -29,7 +29,7 @@ namespace EcommerenceBackend.Application.Domain.Orders
             string deliveryStatus,
             string stripeSessionId)
         {
-            Id = OrderId.Create(Guid.NewGuid());
+            Id = Guid.NewGuid();
             CustomerId = customerId;
             _orderItems = new HashSet<OrderItem>(items);
             TaxAmount = taxAmount;
@@ -43,7 +43,7 @@ namespace EcommerenceBackend.Application.Domain.Orders
             StripeSessionId = stripeSessionId;
         }
 
-        public OrderId Id { get; private set; }
+        public Guid Id { get; private set; }
         public CustomerId CustomerId { get; private set; }
         public IReadOnlyCollection<OrderItem> OrderItems => _orderItems;
         public DateTime OrderDate { get; private set; } = DateTime.UtcNow;

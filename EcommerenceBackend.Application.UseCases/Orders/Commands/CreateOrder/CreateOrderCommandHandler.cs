@@ -31,7 +31,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder
                 var orderItems = request.Items.Select(dto =>
                       new OrderItem(
                           OrderItemId.Create(Guid.NewGuid()),
-                          null, // OrderId null now
+                          null, // Guid null now
                           new ProductId(dto.ProductId),
                           new Money(dto.Price),
                           new Money(dto.Quantity)
@@ -52,7 +52,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder
 
                 await _dbContext.Orders.AddAsync(order, cancellationToken);
                 await _dbContext.SaveChangesAsync(cancellationToken);
-                return order.Id.Value;
+                return order.Id;
             }
             catch (Exception ex)
             {

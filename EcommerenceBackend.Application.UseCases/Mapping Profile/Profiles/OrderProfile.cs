@@ -8,7 +8,7 @@ public class OrderMappingProfile : Profile
     public OrderMappingProfile()
     {
         CreateMap<Order, OrderDto>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.Value))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.CustomerId, opt => opt.MapFrom(src => src.CustomerId.Value))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems));
 
@@ -23,7 +23,7 @@ public class OrderMappingProfile : Profile
           ;
 
         CreateMap<Order, OrderListByCustomerIdDto>()
-             .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.Id.Value))
+             .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.Id))
              .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.DeliveryStatus))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.DeliveryStatus))
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.OrderItems));  

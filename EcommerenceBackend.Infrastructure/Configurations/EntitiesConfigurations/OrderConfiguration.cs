@@ -13,10 +13,6 @@ namespace EcommerenceBackend.Infrastructure.Configurations.Entities
         {
             builder.HasKey(o => o.Id);
 
-            builder.Property(o => o.Id).HasConversion(
-                orderId => orderId.Value,
-                value => new OrderId(value));
-
             builder.Property(o => o.CustomerId).HasConversion(
                 customerId => customerId.Value,
                 value => new CustomerId(value));

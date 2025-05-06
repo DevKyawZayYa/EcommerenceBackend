@@ -17,10 +17,6 @@ namespace EcommerenceBackend.Infrastructure.Configurations.Entities
                 orderItemId => orderItemId.Value,
                 value => new OrderItemId(value));
 
-            builder.Property(oi => oi.OrderId).HasConversion(
-                orderId => orderId.Value,
-                value => new OrderId(value));
-
             builder.Property(oi => oi.ProductId).HasConversion(
                 productId => productId.Value,
                 value => new ProductId(value));

@@ -8,10 +8,10 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderById
 {
     public class GetOrderByIdQuery : IRequest<OrderDetailByIdDto>
     {
-        public OrderId? OrderId { get; }
+        public Guid? OrderId { get; }
         public CustomerId? CustomerId { get; }
 
-        public GetOrderByIdQuery(OrderId orderId, CustomerId customerId)
+        public GetOrderByIdQuery(Guid? orderId, CustomerId customerId)
         {
             OrderId = orderId;
             CustomerId = customerId;
