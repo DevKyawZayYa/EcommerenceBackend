@@ -37,7 +37,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.UpdateOrder
                 )
             ).ToList();
 
-            order.UpdateOrderItems(updatedItems); // ✅ Use domain method
+            order.UpdateOrderItems(updatedItems); 
 
             _dbContext.Orders.Update(order);
             await _dbContext.SaveChangesAsync(cancellationToken);

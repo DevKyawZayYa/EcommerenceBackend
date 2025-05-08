@@ -2,6 +2,7 @@
 using EcommerenceBackend.Application.UseCases.Categories.Commands.CreateCategory;
 using EcommerenceBackend.Application.UseCases.Categories.Queries.GetCategoryList;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace EcommerenceBackend.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoriesController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -30,12 +32,6 @@ namespace EcommerenceBackend.WebApi.Controllers
         {
             var categories = await _mediator.Send(new GetCategoryListQuery());
             return Ok(categories);
-        }
-
-        [HttpGet("testing")]
-        public IActionResult Testing()
-        {
-            return Ok("✅ Test endpoint is working.");
         }
     }
 }

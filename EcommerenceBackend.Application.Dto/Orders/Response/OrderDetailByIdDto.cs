@@ -15,6 +15,7 @@ namespace EcommerenceBackend.Application.Dto.Orders.Response
         public decimal ShippingCost { get; set; }
         public decimal GrandTotal { get; set; }
         public string? Status { get; set; }
+        public string? PaymentStatus { get; set; }
         public string? DeliveryStatus { get; set; }
         public List<OrderItemDto>? Items { get; set; }
     }
