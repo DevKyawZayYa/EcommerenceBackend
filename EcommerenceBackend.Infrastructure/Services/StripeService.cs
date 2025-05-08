@@ -33,7 +33,7 @@ namespace EcommerenceBackend.Infrastructure.Services
                     Quantity = item.Quantity
                 }).ToList(),
                 Mode = "payment",
-                SuccessUrl = "https://nshoppe.shop/payment-status-webhook?session_id={CHECKOUT_SESSION_ID}",
+                SuccessUrl = "https://nshoppe.shop/payment-success?session_id={CHECKOUT_SESSION_ID}",
                 CancelUrl = "https://nshoppe.shop/payment-cancel",
                 Metadata = new Dictionary<string, string>
         {
