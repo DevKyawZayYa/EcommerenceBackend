@@ -30,7 +30,7 @@ namespace EcommerenceBackend.Application.UseCases.Onboarding.Commands.LoginUser
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
-                throw new UnauthorizedAccessException("Invalid email or password.");
+                throw new UnauthorizedAccessException("Invalid Email or Password!");
             }
 
             // Step 2: Retrieve JwtSettings from config

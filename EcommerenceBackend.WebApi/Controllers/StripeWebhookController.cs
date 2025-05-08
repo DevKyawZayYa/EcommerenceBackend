@@ -80,7 +80,7 @@ public class StripeWebhookController : ControllerBase
 
             case "payment_intent.payment_failed":
                 var failedIntent = stripeEvent.Data.Object as PaymentIntent;
-                _logger.LogWarning($"❌ Payment failed: {failedIntent?.Id}");
+                _logger.LogWarning($"Payment failed: {failedIntent?.Id}");
 
                 if (failedIntent?.Metadata != null && failedIntent.Metadata.ContainsKey("orderId"))
                 {
