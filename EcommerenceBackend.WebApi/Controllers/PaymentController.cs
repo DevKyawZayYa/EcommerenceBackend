@@ -71,7 +71,8 @@ namespace EcommerenceBackend.WebApi.Controllers
 
             var orderId = await _mediator.Send(orderCommand);
 
-            var session = await _stripeService.CreateCheckoutSessionAsync(items, orderId);
+            var aa = Guid.Parse("e76c4b4a-4f69-4780-a214-21bcb323a7d8");
+            var session = await _stripeService.CreateCheckoutSessionAsync(items, aa);
 
             return Ok(new
             {
