@@ -56,11 +56,9 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder
             }
             catch (Exception ex)
             {
-                // Handle exception (e.g., log it)
+                Console.WriteLine($"Error creating order: {ex.Message}");
                 throw;
             }
-     
         }
-
     }
 }

@@ -21,14 +21,27 @@ namespace EcommerenceBackend.Application.UseCases.Products.Commands.UpdateProduc
 
         public async Task<bool> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            var product = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken);
-            if (product == null) return false;
+            try
+            {
+                if (request.ProductId == null)
+                    throw new ArgumentNullException(nameof(request.ProductId), "Product ID cannot be null.");
 
-            _mapper.Map(request, product); // Map the request to the product entity
+                var product = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken);
+                if (product == null) return false;
 
-            _dbContext.Products.Update(product);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return true;
+                _mapper.Map(request, product); // Map the request to the product entity
+
+                _dbContext.Products.Update(product);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                return true;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Update Product: {ex.Message}");
+                throw;
+            }
+
+          
         }
     }
 }

@@ -24,19 +24,30 @@ namespace EcommerenceBackend.Application.UseCases.User.Queries.GetUserProfileByA
 
         public async Task<GetUserProfileByAllResponse> Handle(GetUserProfileByAllQuery request, CancellationToken cancellationToken)
         {
-            var users = await _context.Users.Where(x => x.IsActive).ToListAsync(cancellationToken);
-
-            if (users == null || !users.Any())
+            try
             {
-                return null;
+                if (request == null)
+                    throw new ArgumentNullException(nameof(request), "Request cannot be null.");
+
+                var users = await _context.Users.Where(x => x.IsActive).ToListAsync(cancellationToken);
+
+                if (users == null || !users.Any())
+                {
+                    return null;
+                }
+
+                var response = new GetUserProfileByAllResponse
+                {
+                    Users = _mapper.Map<List<UserProfileDto>>(users)
+                };
+
+                return response;
             }
-
-            var response = new GetUserProfileByAllResponse
+            catch (ArgumentNullException ex)
             {
-               Users = _mapper.Map<List<UserProfileDto>>(users) 
-            };
-
-            return response;
+                Console.WriteLine($"Error in Get User Profile By All: {ex.Message}");
+                throw;
+            }    
         }
     }
 }

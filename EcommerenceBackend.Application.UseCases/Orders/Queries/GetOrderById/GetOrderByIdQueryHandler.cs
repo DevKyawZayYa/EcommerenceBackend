@@ -23,27 +23,42 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderById
 
         public async Task<OrderDetailByIdDto> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
         {
-            var query = _dbContext.Orders
-                .AsSplitQuery().AsNoTracking()
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Products).ThenInclude(x=> x.ProductImages)
-                .AsQueryable();
 
-            if (request.OrderId != null)
+            try
             {
-                query = query.Where(o => o.Id == request.OrderId);
-            }
+                if (request.OrderId == null && request.CustomerId == null)
+                {
+                    throw new ArgumentException("Either OrderId or CustomerId must be provided.");
+                }
 
-            if (request.CustomerId != null)
+                var query = _dbContext.Orders
+                    .AsSplitQuery().AsNoTracking()
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Products).ThenInclude(x => x.ProductImages)
+                    .AsQueryable();
+
+                if (request.OrderId != null)
+                {
+                    query = query.Where(o => o.Id == request.OrderId);
+                }
+
+                if (request.CustomerId != null)
+                {
+                    query = query.Where(o => o.CustomerId == request.CustomerId);
+                }
+
+                var order = await query.FirstOrDefaultAsync(cancellationToken);
+
+                if (order == null) return null;
+
+                return _mapper.Map<OrderDetailByIdDto>(order);
+
+            }
+            catch (ArgumentException ex)
             {
-                query = query.Where(o => o.CustomerId == request.CustomerId);
+                Console.WriteLine($"Error in Get Order By Id: {ex.Message}");
+                throw;
             }
-
-            var order = await query.FirstOrDefaultAsync(cancellationToken);
-
-            if (order == null) return null;
-
-            return _mapper.Map<OrderDetailByIdDto>(order);
         }
     }
 }

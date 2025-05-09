@@ -27,36 +27,46 @@ namespace EcommerenceBackend.Application.UseCases.Products.Queries.GetAllProduct
 
         public async Task<PagedResult<ProductListDto>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
-            //Middleware usage
-            if (request == null) throw new ArgumentNullException(nameof(request));
+            try
+            {
+                if (request == null)
+                    throw new ArgumentNullException(nameof(request), "Request cannot be null.");
 
-            int page = request.Page;
-            int pageSize = request.PageSize;
+                //Middleware usage
+                if (request == null) throw new ArgumentNullException(nameof(request));
 
-            string cacheKey = $"products_all_page_{page}_size_{pageSize}";
+                int page = request.Page;
+                int pageSize = request.PageSize;
 
-            var cachedResult = await _cache.GetAsync<PagedResult<ProductListDto>>(cacheKey);
-            if (cachedResult is not null)
-                return cachedResult;
+                string cacheKey = $"products_all_page_{page}_size_{pageSize}";
 
-            var totalItems = await _dbContext.Products.CountAsync(cancellationToken);
+                var cachedResult = await _cache.GetAsync<PagedResult<ProductListDto>>(cacheKey);
+                if (cachedResult is not null)
+                    return cachedResult;
 
-            var products = await _dbContext.Products
-                .AsSplitQuery()
-                .AsNoTracking()
-                .Include(p => p.ProductImages)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync(cancellationToken);
+                var totalItems = await _dbContext.Products.CountAsync(cancellationToken);
 
-            var mappedProducts = _mapper.Map<List<ProductListDto>>(products);
+                var products = await _dbContext.Products
+                    .AsSplitQuery()
+                    .AsNoTracking()
+                    .Include(p => p.ProductImages)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync(cancellationToken);
 
-            var pagedResult = new PagedResult<ProductListDto>(mappedProducts, totalItems, page, pageSize);
+                var mappedProducts = _mapper.Map<List<ProductListDto>>(products);
 
-            // 3️⃣ Save to Redis
-            await _cache.SetAsync(cacheKey, pagedResult, TimeSpan.FromMinutes(10));
+                var pagedResult = new PagedResult<ProductListDto>(mappedProducts, totalItems, page, pageSize);
 
-            return pagedResult;
+                await _cache.SetAsync(cacheKey, pagedResult, TimeSpan.FromMinutes(10));
+
+                return pagedResult;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Get All Products: {ex.Message}");
+                throw;
+            }         
         }
     }
 }

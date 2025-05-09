@@ -20,17 +20,30 @@ namespace EcommerenceBackend.Application.UseCases.Users.Queries.GetMyProfileQuer
 
         public Task<MyProfileResponse> Handle(GetMyProfileQuery request, CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.UserId;
 
-            if (string.IsNullOrEmpty(userId))
+            try
             {
-                throw new UnauthorizedAccessException("User not logged in");
+                if (request == null)
+                    throw new ArgumentNullException(nameof(request), "Request cannot be null.");
+
+                    var userId = _currentUserService.UserId;
+
+                    if (string.IsNullOrEmpty(userId))
+                    {
+                        throw new UnauthorizedAccessException("User not logged in");
+                    }
+
+                    return Task.FromResult(new MyProfileResponse
+                    {
+                        Id = userId,
+                    });
             }
-
-            return Task.FromResult(new MyProfileResponse
+            catch (ArgumentNullException ex)
             {
-                Id = userId,
-            });
+                Console.WriteLine($"Error in Get My Profile: {ex.Message}");
+                throw;
+            }
+          
         }
     }
 }

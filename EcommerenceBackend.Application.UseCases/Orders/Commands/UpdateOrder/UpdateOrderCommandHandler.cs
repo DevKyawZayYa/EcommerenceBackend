@@ -24,26 +24,42 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.UpdateOrder
 
         public async Task<bool> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
         {
-            var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.OrderId, cancellationToken);
-            if (order == null) return false;
 
-            var updatedItems = request.UpdatedItems.Select(dto =>
-                new OrderItem(
-                    OrderItemId.Create(Guid.NewGuid()),
-                    order.Id,
-                    new ProductId(dto.ProductId),
-                    new Money(dto.Price),
-                    new Money(dto.Quantity)
-                )
-            ).ToList();
+            try
+            {
+                if (request.OrderId == null)
+                {
+                    throw new ArgumentNullException(nameof(request.OrderId), "Order ID cannot be null.");
+                }
+                if (request.UpdatedItems == null || !request.UpdatedItems.Any())
+                {
+                    throw new ArgumentNullException(nameof(request.UpdatedItems), "Updated items cannot be null or empty.");
+                }
 
-            order.UpdateOrderItems(updatedItems); 
+                var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.Id == request.OrderId, cancellationToken);
+                if (order == null) return false;
 
-            _dbContext.Orders.Update(order);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return true;
+                var updatedItems = request.UpdatedItems.Select(dto =>
+                    new OrderItem(
+                        OrderItemId.Create(Guid.NewGuid()),
+                        order.Id,
+                        new ProductId(dto.ProductId),
+                        new Money(dto.Price),
+                        new Money(dto.Quantity)
+                    )
+                ).ToList();
+
+                order.UpdateOrderItems(updatedItems);
+
+                _dbContext.Orders.Update(order);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                return true;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return false;
+            }        
         }
-
-
     }
 }

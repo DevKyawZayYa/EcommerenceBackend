@@ -22,27 +22,37 @@ namespace EcommerenceBackend.Application.UseCases.Queries.GetUserProfileById
 
         public async Task<GetUserProfileByIdResponse> Handle(GetUserProfileByIdQuery request, CancellationToken cancellationToken)
         {
-            var cacheKey = $"user_profile_{request.UserId}";
+            try
+            {
+                if (request == null)
+                    throw new ArgumentNullException(nameof(request), "Request cannot be null.");
+                if (request.UserId == null)
+                    throw new ArgumentNullException(nameof(request.UserId), "User ID cannot be null.");
 
-            // 1️⃣ Try from cache
-            var cached = await _cache.GetAsync<GetUserProfileByIdResponse>(cacheKey);
-            if (cached is not null)
-                return cached;
+                var cacheKey = $"user_profile_{request.UserId}";
 
-            // 2️⃣ DB fallback
-            var user = await _context.Users
-                .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
+                var cached = await _cache.GetAsync<GetUserProfileByIdResponse>(cacheKey);
+                if (cached is not null)
+                    return cached;
 
-            if (user == null)
-                return null;
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
 
-            // 3️⃣ Map using AutoMapper
-            var response = _mapper.Map<GetUserProfileByIdResponse>(user);
+                if (user == null)
+                    return null;
 
-            // 4️⃣ Cache it for 10 mins
-            await _cache.SetAsync(cacheKey, response, TimeSpan.FromMinutes(10));
+                var response = _mapper.Map<GetUserProfileByIdResponse>(user);
 
-            return response;
+                // Cache 
+                await _cache.SetAsync(cacheKey, response, TimeSpan.FromMinutes(10));
+
+                return response;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Get User Profile By Id: {ex.Message}");
+                throw;
+            }
         }
     }
 }

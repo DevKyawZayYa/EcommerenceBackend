@@ -23,8 +23,19 @@ namespace EcommerenceBackend.Application.UseCases.Shops.Queries.GetShopOwnerById
 
         public async Task<ShopOwnerDto> Handle(GetShopOwnerByIdQuery request, CancellationToken cancellationToken)
         {
-            var shopOwner = await _context.ShopOwners.FirstOrDefaultAsync(s => s.ShopOwnerId == request.Id, cancellationToken);
-            return _mapper.Map<ShopOwnerDto>(shopOwner);
+            try
+            {
+                if (request.Id == null)
+                    throw new ArgumentNullException(nameof(request.Id), "Shop Owner ID cannot be null.");
+
+                var shopOwner = await _context.ShopOwners.FirstOrDefaultAsync(s => s.ShopOwnerId == request.Id, cancellationToken);
+                return _mapper.Map<ShopOwnerDto>(shopOwner);
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Get Shop Owner By Id: {ex.Message}");
+                throw;
+            }
         }
     }
 }

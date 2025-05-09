@@ -26,59 +26,68 @@ namespace EcommerenceBackend.Application.UseCases.Onboarding.Commands.LoginUser
 
         public async Task<LoginUserResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
-            // Step 1: Validate the user
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+
+            try
             {
-                throw new UnauthorizedAccessException("Invalid Email or Password!");
-            }
+                if (request == null) throw new ArgumentNullException(nameof(request));
+                if (string.IsNullOrEmpty(request.Email)) throw new ArgumentException("Email cannot be null or empty.", nameof(request.Email));
+                if (string.IsNullOrEmpty(request.Password)) throw new ArgumentException("Password cannot be null or empty.", nameof(request.Password));
 
-            // Step 2: Retrieve JwtSettings from config
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-            var secretKey = jwtSettings["Secret"];
-            var issuer = jwtSettings["Issuer"];
-            var audience = jwtSettings["Audience"];
-            var expirationInMinutes = int.Parse(jwtSettings["ExpirationInMinutes"]);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
+                if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+                {
+                    throw new UnauthorizedAccessException("Invalid Email or Password!");
+                }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var jwtSettings = _configuration.GetSection("JwtSettings");
+                var secretKey = jwtSettings["Secret"];
+                var issuer = jwtSettings["Issuer"];
+                var audience = jwtSettings["Audience"];
+                var expirationInMinutes = int.Parse(jwtSettings["ExpirationInMinutes"]!);
 
-            // Step 3: Create access token
-            var claims = new[]
-            {
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var claims = new[]
+                {
                 new Claim(ClaimTypes.NameIdentifier, user.Id!.ToString()),
                 new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(ClaimTypes.Role, user.Role ?? "User")
             };
 
-            var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(expirationInMinutes),
-                signingCredentials: creds
-            );
+                var token = new JwtSecurityToken(
+                    issuer: issuer,
+                    audience: audience,
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddMinutes(expirationInMinutes),
+                    signingCredentials: creds
+                );
 
-            var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
+                var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-            // Step 4: Generate and store refresh token
-            var refreshToken = _jwtService.GenerateRefreshToken();
-            user.RefreshToken = refreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+                var refreshToken = _jwtService.GenerateRefreshToken();
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
 
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync(cancellationToken);
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync(cancellationToken);
 
-            // Step 5: Return tokens
-            return new LoginUserResponse
+                return new LoginUserResponse
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken,
+                    ExpirationTime = DateTime.UtcNow.AddMinutes(expirationInMinutes),
+                    UserId = user.Id.ToString(),
+                    Email = user.Email!,
+                    Role = user.Role ?? "User"
+                };
+            }
+            catch (Exception ex)
             {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                ExpirationTime = DateTime.UtcNow.AddMinutes(expirationInMinutes),
-                UserId = user.Id.ToString(),
-                Email = user.Email!,
-                Role = user.Role ?? "User"
-            };
+                Console.WriteLine($"Error handling request: {ex.Message}");
+                throw;
+            }
+      
         }
     }
 }

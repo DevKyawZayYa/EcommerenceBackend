@@ -18,18 +18,26 @@ namespace EcommerenceBackend.Application.UseCases.Categories.Commands.CreateCate
 
         public async Task<Guid> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            // Use AutoMapper to map the command to the Category entity
-            var category = _mapper.Map<Category>(request);
+            try
+            {
+                if (request == null) throw new ArgumentNullException(nameof(request));
 
-            // Generate a new ID for the category
-            category.Id = Guid.NewGuid();
-            category.CreatedOn = DateTime.UtcNow;
+                var category = _mapper.Map<Category>(request);
 
-            // Add the category to the database
-            _dbContext.Categories.Add(category);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+                category.Id = Guid.NewGuid();
+                category.CreatedOn = DateTime.UtcNow;
 
-            return category.Id;
+                _dbContext.Categories.Add(category);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return category.Id;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating category: {ex.Message}");
+                throw;
+            }
+        
         }
     }
 }

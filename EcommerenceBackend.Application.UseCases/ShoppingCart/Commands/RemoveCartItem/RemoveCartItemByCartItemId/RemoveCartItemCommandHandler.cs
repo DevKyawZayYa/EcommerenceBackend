@@ -18,14 +18,25 @@ namespace EcommerenceBackend.Application.UseCases.ShoppingCart.Commands.RemoveCa
 
         public async Task<bool> Handle(RemoveCartItemCommand request, CancellationToken cancellationToken)
         {
-            var item = await _context.CartItems
-                .FirstOrDefaultAsync(x => x.Id == request.CartItemId, cancellationToken);
+            try
+            {
+                if (request.CartItemId == Guid.Empty)
+                    throw new ArgumentNullException(nameof(request.CartItemId), "Cart Item ID cannot be null.");
+                    
+                var item = await _context.CartItems
+                    .FirstOrDefaultAsync(x => x.Id == request.CartItemId, cancellationToken);
 
-            if (item == null) return false;
+                    if (item == null) return false;
 
-            _context.CartItems.Remove(item);
-            await _context.SaveChangesAsync(cancellationToken);
-            return true;
+                    _context.CartItems.Remove(item);
+                    await _context.SaveChangesAsync(cancellationToken);
+                    return true;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Remove Cart Item: {ex.Message}");
+                throw;
+            } 
         }
     }
 }

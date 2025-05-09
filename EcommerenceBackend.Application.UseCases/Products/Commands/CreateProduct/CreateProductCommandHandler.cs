@@ -20,13 +20,31 @@ namespace EcommerenceBackend.Application.UseCases.Products.Commands.CreateProduc
 
         public async Task<Guid> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            var product = _mapper.Map<Product>(request.ProductDto);
-            product.GetType().GetProperty("ShoppingCartId")?.SetValue(product, ProductId.Create(Guid.NewGuid()));
+            try
+            {
+                if (request.ProductDto == null)
+                    throw new ArgumentNullException(nameof(request.ProductDto), "Product DTO cannot be null.");
+                if (string.IsNullOrEmpty(request.ProductDto.Name))
+                    throw new ArgumentException("Product name cannot be null or empty.", nameof(request.ProductDto.Name));
+                if (request.ProductDto.Price <= 0)
+                    throw new ArgumentOutOfRangeException(nameof(request.ProductDto.Price), "Product price must be greater than zero.");
 
-            _dbContext.Products.Add(product);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+                var product = _mapper.Map<Product>(request.ProductDto);
+                product.GetType().GetProperty("ShoppingCartId")?.SetValue(product, ProductId.Create(Guid.NewGuid()));
 
-            return product.Id!.Value; // Return the created Product ID
+                _dbContext.Products.Add(product);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return product.Id!.Value; 
+
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Create Product: {ex.Message}");
+                throw;
+            }
+
+    
         }
     }
 }

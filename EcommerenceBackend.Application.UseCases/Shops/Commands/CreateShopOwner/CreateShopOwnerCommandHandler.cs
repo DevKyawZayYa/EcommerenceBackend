@@ -19,18 +19,40 @@ namespace EcommerenceBackend.Application.UseCases.Shops.Commands.CreateShopOwner
 
         public async Task<Guid> Handle(CreateShopOwnerCommand request, CancellationToken cancellationToken)
         {
-            var shopOwner = new ShopOwner
+            try
             {
-                ShopOwnerId = Guid.NewGuid(),
-                UserId = request.UserId,
-                ShopId = request.ShopId,
-                BusinessType = request.BusinessType,
-                RevenueShare = request.RevenueShare
-            };
+                if (request.UserId == null)
+                    throw new ArgumentNullException(nameof(request.UserId), "User ID cannot be null.");
+                if (request.ShopId == null)
+                    throw new ArgumentNullException(nameof(request.ShopId), "Shop ID cannot be null.");
+                if (request.BusinessType == null)
+                    throw new ArgumentNullException(nameof(request.BusinessType), "Business Type cannot be null.");
+                if (request.RevenueShare < 0 || request.RevenueShare > 100)
+                    throw new ArgumentOutOfRangeException(nameof(request.RevenueShare), "Revenue Share must be between 0 and 100.");
 
-            _context.ShopOwners.Add(shopOwner);
-            await _context.SaveChangesAsync(cancellationToken);
-            return shopOwner.ShopOwnerId;
+                var shopOwner = new ShopOwner
+                {
+                    ShopOwnerId = Guid.NewGuid(),
+                    UserId = request.UserId,
+                    ShopId = request.ShopId,
+                    BusinessType = request.BusinessType,
+                    RevenueShare = request.RevenueShare
+                };
+
+                _context.ShopOwners.Add(shopOwner);
+                await _context.SaveChangesAsync(cancellationToken);
+                return shopOwner.ShopOwnerId;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Create Shop Owner: {ex.Message}");
+                throw;
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Console.WriteLine($"Error in Create Shop Owner: {ex.Message}");
+                throw;
+            }           
         }
     }
 }

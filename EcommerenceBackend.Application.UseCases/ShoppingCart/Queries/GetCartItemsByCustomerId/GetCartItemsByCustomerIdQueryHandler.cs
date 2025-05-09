@@ -22,24 +22,36 @@ namespace EcommerenceBackend.Application.UseCases.ShoppingCart.Queries.GetCartIt
 
         public async Task<List<ShoppingCartDto>> Handle(GetCartItemsByCustomerIdQuery request, CancellationToken cancellationToken)
         {
-            if (request.CustomerId == Guid.Empty)
-                throw new ArgumentException("CustomerId cannot be empty.");
 
-            var shoppingCart = await _context.ShoppingCarts
-                .AsSplitQuery()
-                .AsNoTracking()
-                .Include(c => c.Items)
-                    .ThenInclude(i => i.Products)
-                        .ThenInclude(p => p.ProductImages)
-                .FirstOrDefaultAsync(c => c.CustomerId == new CustomerId(request.CustomerId), cancellationToken);
+            try
+            {
+                if (request.CustomerId! == null)
+                    throw new ArgumentNullException(nameof(request.CustomerId), "Customer ID cannot be null.");
 
-            if (shoppingCart == null || !shoppingCart.Items.Any())
-                return new List<ShoppingCartDto>();
+                        if (request.CustomerId == Guid.Empty)
+                            throw new ArgumentException("CustomerId cannot be empty.");
 
-            var shoppingCartDto = _mapper.Map<ShoppingCartDto>(shoppingCart);
-            var result = new List<ShoppingCartDto> { shoppingCartDto };
+                        var shoppingCart = await _context.ShoppingCarts
+                            .AsSplitQuery()
+                            .AsNoTracking()
+                            .Include(c => c.Items)
+                                .ThenInclude(i => i.Products)
+                                    .ThenInclude(p => p.ProductImages)
+                            .FirstOrDefaultAsync(c => c.CustomerId == new CustomerId(request.CustomerId), cancellationToken);
 
-            return result;
+                        if (shoppingCart == null || !shoppingCart.Items.Any())
+                            return new List<ShoppingCartDto>();
+
+                        var shoppingCartDto = _mapper.Map<ShoppingCartDto>(shoppingCart);
+                        var result = new List<ShoppingCartDto> { shoppingCartDto };
+
+                        return result;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Get Cart Items By Customer Id: {ex.Message}");
+                throw;
+            }      
         }
     }
 }

@@ -14,19 +14,30 @@ namespace EcommerenceBackend.Application.UseCases.Shipment.Commands
 
         public async Task<Guid> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var shipment = new Domain.Shipment.Shipment
+            try
             {
-                OrderID = request.OrderID,
-                ShippingCost = request.ShippingCost,
-                Carrier = request.Carrier,
-                TrackingNumber = request.TrackingNumber,
-                ShipmentDate = request.ShipmentDate,
-                DeliveryStatus = request.DeliveryStatus
-            };
+                if (request.OrderID == null)
+                    throw new ArgumentNullException(nameof(request.OrderID), "Order ID cannot be null.");
 
-            _context.Shipments.Add(shipment);
-            await _context.SaveChangesAsync(cancellationToken);
-            return shipment.ShipmentID;
+                var shipment = new Domain.Shipment.Shipment
+                {
+                    OrderID = request.OrderID,
+                    ShippingCost = request.ShippingCost,
+                    Carrier = request.Carrier,
+                    TrackingNumber = request.TrackingNumber,
+                    ShipmentDate = request.ShipmentDate,
+                    DeliveryStatus = request.DeliveryStatus
+                };
+
+                _context.Shipments.Add(shipment);
+                await _context.SaveChangesAsync(cancellationToken);
+                return shipment.ShipmentID;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Create Shipment: {ex.Message}");
+                throw;
+            }       
         }
     }
 }

@@ -20,19 +20,27 @@ namespace EcommerenceBackend.Application.UseCases.Reviews.Commands.CreateReview
 
         public async Task<Guid> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
         {
-            var review = new Review
+            try
             {
-                ReviewId = Guid.NewGuid(),
-                CustomerId = request.CustomerId,
-                ProductId = request.ProductId,
-                Rating = request.Rating,
-                Comment = request.Comment,
-                DateCreated = DateTime.UtcNow
-            };
+                var review = new Review
+                {
+                    ReviewId = Guid.NewGuid(),
+                    CustomerId = request.CustomerId,
+                    ProductId = request.ProductId,
+                    Rating = request.Rating,
+                    Comment = request.Comment,
+                    DateCreated = DateTime.UtcNow
+                };
 
-            _context.Reviews.Add(review);
-            await _context.SaveChangesAsync(cancellationToken);
-            return review.ReviewId;
+                _context.Reviews.Add(review);
+                await _context.SaveChangesAsync(cancellationToken);
+                return review.ReviewId;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Create Review: {ex.Message}");
+                throw;
+            }     
         }
     }
 }

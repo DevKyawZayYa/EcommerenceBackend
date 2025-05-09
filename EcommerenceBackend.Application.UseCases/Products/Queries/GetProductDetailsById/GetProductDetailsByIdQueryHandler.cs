@@ -23,31 +23,40 @@ namespace EcommerenceBackend.Application.UseCases.Products.Queries.GetProductDet
 
         public async Task<ProductDetailsDto> Handle(GetProductDetailsByIdQuery request, CancellationToken cancellationToken)
         {
-            //Middleware usage
-            if (request == null) throw new ArgumentNullException(nameof(request));
+            try
+            {
+                if (request == null)
+                    throw new ArgumentNullException(nameof(request), "Request cannot be null.");
+                if (request.ProductId == null)
+                    throw new ArgumentNullException(nameof(request.ProductId), "Product ID cannot be null.");
 
-            var cacheKey = $"product_detail_{request.ProductId}";
+                if (request == null) throw new ArgumentNullException(nameof(request));
 
-            // 1️⃣ Try from Redis
-            var cached = await _cache.GetAsync<ProductDetailsDto>(cacheKey);
-            if (cached is not null)
-                return cached;
+                var cacheKey = $"product_detail_{request.ProductId}";
 
-            // 2️⃣ Load from DB
-            var product = await _dbContext.Products
-                .Include(p => p.ProductImages)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.Id == request.ProductId, cancellationToken);
+                var cached = await _cache.GetAsync<ProductDetailsDto>(cacheKey);
+                if (cached is not null)
+                    return cached;
 
-            if (product == null)
-                throw new KeyNotFoundException($"Product with ID {request.ProductId} was not found.");
+                var product = await _dbContext.Products
+                    .Include(p => p.ProductImages)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(p => p.Id == request.ProductId, cancellationToken);
 
-            var dto = _mapper.Map<ProductDetailsDto>(product);
+                if (product == null)
+                    throw new KeyNotFoundException($"Product with ID {request.ProductId} was not found.");
 
-            // 3️⃣ Save to Redis for 15 min
-            await _cache.SetAsync(cacheKey, dto, TimeSpan.FromMinutes(15));
+                var dto = _mapper.Map<ProductDetailsDto>(product);
 
-            return dto;
+                await _cache.SetAsync(cacheKey, dto, TimeSpan.FromMinutes(15));
+
+                return dto;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Get Product Details By Id: {ex.Message}");
+                throw;
+            }          
         }
     }
 }

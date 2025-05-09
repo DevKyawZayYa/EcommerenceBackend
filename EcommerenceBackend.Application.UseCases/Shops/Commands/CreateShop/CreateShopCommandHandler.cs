@@ -19,20 +19,28 @@ namespace EcommerenceBackend.Application.UseCases.Shops.Commands.CreateShop
 
         public async Task<Guid> Handle(CreateShopCommand request, CancellationToken cancellationToken)
         {
-            var shop = new Shop
+            try
             {
-                ShopId = Guid.NewGuid(),
-                ShopName = request.ShopName,
-                OwnerId = request.OwnerId,
-                Location = request.Location,
-                ContactInfo = request.ContactInfo,
-                CreatedDate = DateTime.UtcNow,
-                IsVerified = request.IsVerified
-            };
+                var shop = new Shop
+                {
+                    ShopId = Guid.NewGuid(),
+                    ShopName = request.ShopName,
+                    OwnerId = request.OwnerId,
+                    Location = request.Location,
+                    ContactInfo = request.ContactInfo,
+                    CreatedDate = DateTime.UtcNow,
+                    IsVerified = request.IsVerified
+                };
 
-            _context.Shops.Add(shop);
-            await _context.SaveChangesAsync(cancellationToken);
-            return shop.ShopId;
+                _context.Shops.Add(shop);
+                await _context.SaveChangesAsync(cancellationToken);
+                return shop.ShopId;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Create Shop: {ex.Message}");
+                throw;
+            }       
         }
     }
 }

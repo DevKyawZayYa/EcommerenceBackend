@@ -22,11 +22,22 @@ namespace EcommerenceBackend.Application.UseCases.Categories.Queries.GetCategory
 
         public async Task<List<CategoryDto>> Handle(GetCategoryListQuery request, CancellationToken cancellationToken)
         {
-            var categories = await _dbContext.Categories.Where(x=> x.IsShowNavBar == true)
+            try
+            {
+                if (request == null) throw new ArgumentNullException(nameof(request));
+
+                var categories = await _dbContext.Categories.Where(x => x.IsShowNavBar == true)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
-            return _mapper.Map<List<CategoryDto>>(categories);
+                return _mapper.Map<List<CategoryDto>>(categories);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error handling request: {ex.Message}");
+                throw;
+            }
+        
         }
     }
 }

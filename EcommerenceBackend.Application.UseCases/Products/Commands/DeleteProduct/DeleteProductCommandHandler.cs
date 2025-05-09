@@ -20,14 +20,26 @@ namespace EcommerenceBackend.Application.UseCases.Products.Commands.DeleteProduc
 
         public async Task<bool> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
-            var product = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken);
-            if (product == null)
-                return false;
+            try
+            {
+                if (request.ProductId == null)
+                    throw new ArgumentNullException(nameof(request.ProductId), "Product ID cannot be null.");
 
-            _dbContext.Products.Remove(product);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+                var product = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken);
+                if (product == null)
+                    return false;
 
-            return true;
+                _dbContext.Products.Remove(product);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return true;
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Delete Product: {ex.Message}");
+                throw;
+            }
+
         }
     }
 }

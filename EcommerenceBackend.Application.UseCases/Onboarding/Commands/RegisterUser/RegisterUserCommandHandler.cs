@@ -24,31 +24,36 @@ namespace EcommerenceBackend.Application.UseCases.Onboarding.Commands.RegisterUs
 
         public async Task Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            // Validate the request
-            var validationResult = await _validator.ValidateAsync(request, cancellationToken);
-            if (!validationResult.IsValid)
+            try
             {
-                // Handle validation failure (e.g., throw an exception or return an error response)
+                // Validate the request
+                var validationResult = await _validator.ValidateAsync(request, cancellationToken);
+                if (!validationResult.IsValid)
+                {
+                    throw new InvalidOperationException("Validation failed.");
+                }
+
+                var existingUser = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
+
+                if (existingUser != null)
+                {
+                    throw new InvalidOperationException("A user with this email already exists.");
+                }
+
+                var newUser = _mapper.Map<EcommerenceBackend.Application.Domain.Users.User>(request);
+                newUser.Id = new UserId(Guid.NewGuid()); // Generate a new ID for the user
+                newUser.Password = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 12);
+                newUser.CreatedDate = DateTime.UtcNow;
+                newUser.IsActive = true;
+
+                await _context.Users.AddAsync(newUser, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
             }
-
-            // Check if the user already exists
-            var existingUser = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
-
-            if (existingUser != null)
+            catch (Exception ex)
             {
-                throw new InvalidOperationException("A user with this email already exists.");
-            }
-
-            // Map the command to the User entity.
-            var newUser = _mapper.Map<EcommerenceBackend.Application.Domain.Users.User>(request);
-            newUser.Id= new UserId(Guid.NewGuid()); // Generate a new ID for the user
-            newUser.Password = BCrypt.Net.BCrypt.HashPassword(request.Password, workFactor: 12);
-            newUser.CreatedDate = DateTime.UtcNow;
-            newUser.IsActive = true;
-
-            await _context.Users.AddAsync(newUser, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+                throw new InvalidOperationException("Validation error: " + ex.Message);
+            }      
         }
     }
 }

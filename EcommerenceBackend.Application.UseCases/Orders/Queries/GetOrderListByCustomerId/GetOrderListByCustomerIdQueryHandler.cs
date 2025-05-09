@@ -28,36 +28,44 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderListByC
 
         public async Task<List<OrderListByCustomerIdDto>> Handle(GetOrderListByCustomerIdQuery request, CancellationToken cancellationToken)
         {
-            if (request.CustomerId == null)
-                throw new ArgumentNullException(nameof(request.CustomerId), "Customer ID cannot be null.");
+            try
+            {
+                if (request.CustomerId == null)
+                    throw new ArgumentNullException(nameof(request.CustomerId), "Customer ID cannot be null.");
 
-            string cacheKey = $"orders_by_customer_{request.CustomerId}";
+                string cacheKey = $"orders_by_customer_{request.CustomerId}";
 
-            // Check Redis cache
-            var cached = await _cache.GetAsync<List<OrderListByCustomerIdDto>>(cacheKey);
-            if (cached is not null)
-                return cached;
+                // Check Redis cache
+                var cached = await _cache.GetAsync<List<OrderListByCustomerIdDto>>(cacheKey);
+                if (cached is not null)
+                    return cached;
 
-            var query = _dbContext.Orders
-                .Where(o => o.CustomerId == request.CustomerId)
-                .AsSplitQuery()
-                .AsNoTracking()
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Products)
-                .ThenInclude(p => p.ProductImages)
-                .OrderByDescending(o => o.OrderDate);
+                var query = _dbContext.Orders
+                    .Where(o => o.CustomerId == request.CustomerId)
+                    .AsSplitQuery()
+                    .AsNoTracking()
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Products)
+                    .ThenInclude(p => p.ProductImages)
+                    .OrderByDescending(o => o.OrderDate);
 
-            var orders = await query.ToListAsync(cancellationToken);
+                var orders = await query.ToListAsync(cancellationToken);
 
-            if (orders == null || !orders.Any())
-                return new List<OrderListByCustomerIdDto>();
+                if (orders == null || !orders.Any())
+                    return new List<OrderListByCustomerIdDto>();
 
-            var result = _mapper.Map<List<OrderListByCustomerIdDto>>(orders);
+                var result = _mapper.Map<List<OrderListByCustomerIdDto>>(orders);
 
-            // Cache for 5 minutes
-            await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
+                // Cache for 5 minutes
+                await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
 
-            return result;
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"Error in Get Order List By Customer Id: {ex.Message}");
+                throw;
+            }      
         }
     }
 }

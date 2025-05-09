@@ -15,21 +15,31 @@ namespace EcommerenceBackend.Application.UseCases.Onboarding.Commands.ChangePass
 
         public async Task<Result> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
-            if (user == null)
+            try
             {
-                return Result.Failure("User not found.");
-            }
+                if (request == null) throw new ArgumentNullException(nameof(request));
 
-            if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.Password))
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+                if (user == null)
+                {
+                    return Result.Failure("User not found.");
+                }
+
+                if (!BCrypt.Net.BCrypt.Verify(request.CurrentPassword, user.Password))
+                {
+                    return Result.Failure("Current password is incorrect.");
+                }
+
+                user.Password = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return Result.Success("Password changed successfully.");
+            }
+            catch (Exception ex)
             {
-                return Result.Failure("Current password is incorrect.");
-            }
-
-            user.Password = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return Result.Success("Password changed successfully.");
+                Console.WriteLine($"Error handling request: {ex.Message}");
+                throw;
+            }        
         }
     }
 }

@@ -24,9 +24,20 @@ namespace EcommerenceBackend.Application.UseCases.Payments.Queries.GetInvoiceDet
 
         public async Task<List<PaymentDto>> Handle(GetInvoiceDetailsByOrderIdQuery request, CancellationToken cancellationToken)
         {
-            var payments = await _context.Payments
-                .Where(p => p.OrderId == request.OrderId).ToListAsync(cancellationToken);
-            return _mapper.Map<List<PaymentDto>>(payments);
+            try
+            {
+                if (request.OrderId! == null)
+                    throw new ArgumentNullException(nameof(request.OrderId), "Order ID cannot be null.");
+
+                var payments = await _context.Payments
+                      .Where(p => p.OrderId == request.OrderId).ToListAsync(cancellationToken);
+                            return _mapper.Map<List<PaymentDto>>(payments);
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Get Invoice Details By Order Id: {ex.Message}");
+                throw;
+            }    
         }
     }
 }

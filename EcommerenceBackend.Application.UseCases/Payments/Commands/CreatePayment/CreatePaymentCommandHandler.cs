@@ -20,21 +20,29 @@ namespace EcommerenceBackend.Application.UseCases.Payments.Commands.CreatePaymen
 
         public async Task<Guid> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
         {
-            var payment = new Payment
+            try
             {
-                PaymentId = Guid.NewGuid(),
-                OrderId = request.OrderId,
-                Amount = request.Amount,
-                PaymentMethod = request.PaymentMethod,
-                PaymentStatus = request.PaymentStatus,
-                TransactionID = request.TransactionId,
-                TransactionType = request.TransactionType,
-                PaymentDate = DateTime.UtcNow
-            };
+                var payment = new Payment
+                {
+                    PaymentId = Guid.NewGuid(),
+                    OrderId = request.OrderId,
+                    Amount = request.Amount,
+                    PaymentMethod = request.PaymentMethod,
+                    PaymentStatus = request.PaymentStatus,
+                    TransactionID = request.TransactionId,
+                    TransactionType = request.TransactionType,
+                    PaymentDate = DateTime.UtcNow
+                };
 
-            _context.Payments.Add(payment);
-            await _context.SaveChangesAsync(cancellationToken);
-            return payment.PaymentId;
+                _context.Payments.Add(payment);
+                await _context.SaveChangesAsync(cancellationToken);
+                return payment.PaymentId;
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"Error in Create Payment: {ex.Message}");
+                throw;
+            }       
         }
     }
 }

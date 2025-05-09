@@ -23,8 +23,20 @@ namespace EcommerenceBackend.Application.UseCases.Shipment.Queries.GetShipmentBy
 
         public async Task<ShipmentDto> Handle(GetShipmentByIdQuery request, CancellationToken cancellationToken)
         {
-            var shipment = await _context.Shipments.FindAsync(request.ShipmentID);
-            return shipment != null ? _mapper.Map<ShipmentDto>(shipment) : null;
+            try
+            {
+                if (request.ShipmentID == null)
+                    throw new ArgumentNullException(nameof(request.ShipmentID), "Shipment ID cannot be null.");
+
+                var shipment = await _context.Shipments.FindAsync(request.ShipmentID);
+                return shipment != null ? _mapper.Map<ShipmentDto>(shipment) : null;
+
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine($"Error in Get Shipment By Id: {ex.Message}");
+                throw;
+            }
         }
     }
 }
