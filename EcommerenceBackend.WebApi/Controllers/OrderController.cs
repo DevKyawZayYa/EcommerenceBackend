@@ -13,6 +13,7 @@ namespace EcommerenceBackend.WebApi.Controllers
 {
     [ApiController]
     [Route("api/orders")]
+    [Authorize]
     public class OrderController : ControllerBase
     {
         private readonly IMediator _mediator;
