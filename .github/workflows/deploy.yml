@@ -9,7 +9,7 @@ jobs:
   deploy:
     name: Deploy .NET Backend App to EC2
     runs-on: ubuntu-latest
-    environment: main
+    environment: testing123
 
     steps:
       - name: Checkout Code
