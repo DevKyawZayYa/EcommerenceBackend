@@ -33,8 +33,8 @@ namespace EcommerenceBackend.Infrastructure.Services
                     Quantity = item.Quantity
                 }).ToList(),
                 Mode = "payment",
-                SuccessUrl = "https://nshoppe.shop/payment-success?session_id={CHECKOUT_SESSION_ID}",
-                CancelUrl = "https://nshoppe.shop/payment-cancel",
+                SuccessUrl = "https://www.nshoppe.shop/payment-success?session_id={CHECKOUT_SESSION_ID}",
+                CancelUrl = "https://www.nshoppe.shop/payment-cancel",
                 Metadata = new Dictionary<string, string>
         {
             { "orderId", orderId.ToString() }
