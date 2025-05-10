@@ -33,13 +33,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderListByC
                 if (request.CustomerId == null)
                     throw new ArgumentNullException(nameof(request.CustomerId), "Customer ID cannot be null.");
 
-                string cacheKey = $"orders_by_customer_{request.CustomerId}";
-
                 // Check Redis cache
-                var cached = await _cache.GetAsync<List<OrderListByCustomerIdDto>>(cacheKey);
-                if (cached is not null)
-                    return cached;
-
                 var query = _dbContext.Orders
                     .Where(o => o.CustomerId == request.CustomerId)
                     .AsSplitQuery()
@@ -55,9 +49,6 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Queries.GetOrderListByC
                     return new List<OrderListByCustomerIdDto>();
 
                 var result = _mapper.Map<List<OrderListByCustomerIdDto>>(orders);
-
-                // Cache for 5 minutes
-                await _cache.SetAsync(cacheKey, result, TimeSpan.FromMinutes(5));
 
                 return result;
             }
