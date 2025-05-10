@@ -73,10 +73,5 @@ namespace EcommerenceBackend.Infrastructure.Services
 
             return principal;
         }
-
-
-
-
     }
-
 }
