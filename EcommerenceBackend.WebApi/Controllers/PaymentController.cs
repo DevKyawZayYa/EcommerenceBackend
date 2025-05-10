@@ -64,6 +64,7 @@ namespace EcommerenceBackend.WebApi.Controllers
                     Quantity = x.Quantity
 
                 }).ToList(),
+                PaymentMethod = "Stripe",
                 TaxAmount = tax,
                 ShippingCost = shipping,
                 DiscountAmount = discount,

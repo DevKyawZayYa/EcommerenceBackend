@@ -25,6 +25,7 @@ namespace EcommerenceBackend.Application.Domain.Orders
             decimal shippingCost, 
             decimal discountAmount, 
             string status, 
+            string paymentMethod, 
             string paymentStatus, 
             string deliveryStatus,
             string stripeSessionId)
@@ -36,6 +37,7 @@ namespace EcommerenceBackend.Application.Domain.Orders
             ShippingCost = shippingCost;
             DiscountAmount = discountAmount;
             Status = status;
+            PaymentMethod = paymentMethod;
             PaymentStatus = paymentStatus;
             DeliveryStatus = deliveryStatus;
             TotalAmount = _orderItems.Sum(item => item.Price.Amount * item.Quantity.Amount);
@@ -53,6 +55,7 @@ namespace EcommerenceBackend.Application.Domain.Orders
         public decimal TotalAmount { get; private set; }
         public decimal GrandTotal { get; private set; }
         public string Status { get; private set; }
+        public string PaymentMethod { get; private set; }
         public string PaymentStatus { get; private set; }
         public string DeliveryStatus { get; private set; }
         public string? StripeSessionId { get; private set; }

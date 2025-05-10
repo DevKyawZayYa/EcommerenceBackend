@@ -17,6 +17,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder
         public decimal ShippingCost { get; set; }
         public decimal DiscountAmount { get; set; }
         public string Status { get; set; } = "Pending";
+        public string PaymentMethod { get; set; } = "Stripe";
         public string PaymentStatus { get; set; } = "Unpaid";
         public string DeliveryStatus { get; set; } = "Processing";
         public string? StripeSessionId { get; set; } 

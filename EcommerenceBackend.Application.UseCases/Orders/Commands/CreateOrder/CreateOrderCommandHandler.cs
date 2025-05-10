@@ -45,6 +45,7 @@ namespace EcommerenceBackend.Application.UseCases.Orders.Commands.CreateOrder
                     request.ShippingCost,
                     request.DiscountAmount,
                     request.Status ?? "Pending",
+                    request.PaymentMethod ?? "Stripe",
                     request.PaymentStatus ?? "Unpaid",
                     request.DeliveryStatus ?? "Processing",
                     request.StripeSessionId ?? string.Empty
